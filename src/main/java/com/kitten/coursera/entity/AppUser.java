@@ -2,6 +2,7 @@ package com.kitten.coursera.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "t_usr")
+@Builder
 public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

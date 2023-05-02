@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,14 +23,16 @@ public class CourseService {
     }
 
     public List<Course> findByTitleWithPrefix(String prefix) {
-        return courseRepo.findAll().stream()
-            .filter(course -> course.getTitle().startsWith(prefix))
-            .collect(Collectors.toList());
+        return courseRepo.findByTitleLike(prefix + "%");
     }
 
 
     public Course addCourse(CourseDto dto) {
-        var course = new Course(dto.title, dto.description, dto.author);
+        var course = Course.builder()
+            .title(dto.getTitle())
+            .description(dto.getDescription())
+            .author(dto.getAuthor())
+            .build();
         return courseRepo.save(course);
     }
 
