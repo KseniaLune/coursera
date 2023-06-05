@@ -1,5 +1,5 @@
-create table t_lesson
-(
-    c_id        bigserial primary key,
-    c_name        varchar(255)
-)
+-- create table t_lesson
+-- (
+--     c_id        uuid primary key,
+--     c_title        varchar(255)
+-- )
