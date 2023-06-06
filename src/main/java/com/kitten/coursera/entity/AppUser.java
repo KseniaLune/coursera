@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -34,5 +35,7 @@ public class AppUser {
 //    private Date dateRegistration;
     @Column(name = "c_phone")
     private Integer phone;
+    @ManyToMany(mappedBy = "users")
+    private Set<Course> courses;
 
 }

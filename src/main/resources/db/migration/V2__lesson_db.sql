@@ -1,5 +1,0 @@
--- create table t_lesson
--- (
---     c_id        uuid primary key,
---     c_title        varchar(255)
--- )
