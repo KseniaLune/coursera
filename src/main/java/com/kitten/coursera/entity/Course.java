@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -29,10 +30,17 @@ public class Course {
     public String author;
     @OneToMany(mappedBy = "course", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Lesson> lessons;
+    @ManyToMany
+    private Set<AppUser> users;
 
     public Course(String title, String description, String author) {
         this.title = title;
         this.description = description;
         this.author = author;
+    }
+
+    public void addLesson(Lesson lesson){
+        lesson.setCourse(this);
+        this.lessons.add(lesson);
     }
 }
