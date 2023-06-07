@@ -8,10 +8,20 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CourseService {
+
+    Course create (CourseDto dto);
+
     List<Course> readAllCourses();
-    Optional<Course> findBy(UUID id);
-    List<Course> findByTitleWithPrefix(String prefix);
-    Course addCourse(CourseDto dto);
-    Course updateCourse(UUID id, CourseDto dto);
-    void deleteBy(UUID id);
+
+    Course findBy(UUID id);
+
+    Course update(Course course);
+    Course update (CourseDto courseDto);
+
+//    List<Course> findByTitleWithPrefix(String prefix);
+//    Course addCourse(CourseDto dto);
+//    Course updateCourse(UUID id, CourseDto dto);
+//    Course updateCourse(Course course);
+//    void deleteBy(UUID id);
+
 }

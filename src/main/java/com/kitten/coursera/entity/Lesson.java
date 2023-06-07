@@ -21,9 +21,9 @@ public class Lesson {
     private UUID id;
     @Column(name = "c_title")
     private String title;
-    @Lob
     @Column(name = "c_text")
     private String text;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 }

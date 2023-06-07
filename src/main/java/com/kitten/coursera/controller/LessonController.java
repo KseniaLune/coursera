@@ -1,7 +1,6 @@
 package com.kitten.coursera.controller;
 
 import com.kitten.coursera.dto.LessonDto;
-import com.kitten.coursera.entity.Lesson;
 import com.kitten.coursera.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +14,11 @@ import java.util.List;
 @Controller
 @RequestMapping("/lesson")
 public class LessonController {
-    private final LessonService lessonService;
-
-    @GetMapping
-    public ResponseEntity<List<LessonDto>> readAll(){
-        return ResponseEntity.ok().body(lessonService.findAll());
-    }
+//    private final LessonService lessonService;
+//
+//    @GetMapping
+//    public ResponseEntity<List<LessonDto>> readAll(){
+//        return ResponseEntity.ok().body(lessonService.findAll());
+//    }
 
 }

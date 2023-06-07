@@ -1,20 +1,15 @@
 package com.kitten.coursera.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
+@Entity
+@Table(name = "t_usr")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "t_usr")
 @Builder
 public class AppUser {
     @Id
@@ -35,7 +30,5 @@ public class AppUser {
 //    private Date dateRegistration;
     @Column(name = "c_phone")
     private Integer phone;
-    @ManyToMany(mappedBy = "users")
-    private Set<Course> courses;
 
 }
