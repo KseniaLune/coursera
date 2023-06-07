@@ -1,15 +1,12 @@
 package com.kitten.coursera.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.repository.cdi.Eager;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+
+
 
 @Entity
 @Table(name = "t_course")
@@ -28,10 +25,9 @@ public class Course {
     public String description;
     @Column(name = "c_author")
     public String author;
+
     @OneToMany(mappedBy = "course", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<Lesson> lessons;
-    @ManyToMany
-    private Set<AppUser> users;
+    private List<Lesson> lessons = new ArrayList<>();
 
     public Course(String title, String description, String author) {
         this.title = title;

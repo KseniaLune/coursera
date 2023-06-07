@@ -20,18 +20,18 @@ repositories {
 
 dependencies {
    // implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.slf4j:slf4j-api:2.0.7'
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     //   implementation 'org.springframework.boot:spring-boot-starter-data-redis'
- //   implementation 'org.springframework.boot:spring-boot-starter-security'
+    //   implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.flywaydb:flyway-core'
-    compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
-    annotationProcessor 'org.projectlombok:lombok'
     implementation("com.github.gavlyukovskiy:datasource-proxy-spring-boot-starter:1.9.0")
 
 
