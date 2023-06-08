@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -64,21 +65,7 @@ public class CourseServiceImpl implements CourseService {
         course.setAuthor(dto.getAuthor());
         return courseRepo.save(course);
     }
-//    public Course addCourse(CourseDto dto) {
-//        var course = Course.builder()
-//            .title(dto.getTitle())
-//            .description(dto.getDescription())
-//            .author(dto.getAuthor())
-//            .build();
-//        return courseRepo.save(course);
-//    }
-//
-//
-//    @Override
-//    public Course updateCourse(Course course) {
-//       return courseRepo.save(course);
-//    }
-//
+
     @Override
     @Transactional
     public void deleteBy(UUID id) {

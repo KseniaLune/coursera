@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface UserRepo extends JpaRepository<AppUser, UUID> {
 
     @Query(value = "SELECT c_course_id as c_id FROM t_user_course t WHERE t.c_usr_id=:id", nativeQuery = true)
-    List<UUID> findUUIDCourseByUserId(@Param("id")UUID id);
+    List<UUID> findUUIDCourseByUserId(@Param("id") UUID id);
 
     @Transactional
     @Query(value = "SELECT new Course(tc.id, tc.title, tc.description, tc.author) " +
@@ -23,7 +23,7 @@ public interface UserRepo extends JpaRepository<AppUser, UUID> {
         "JOIN UserToCourse tuc ON tc.id = tuc.courseId " +
         "JOIN AppUser tu ON tuc.userId = tu.id " +
         "WHERE tu.id = :id")
-    List<Course> findCourseByUserId(@Param("id")UUID id);
+    List<Course> findCourseByUserId(@Param("id") UUID id);
 
     @Transactional
     @Modifying(clearAutomatically = true)

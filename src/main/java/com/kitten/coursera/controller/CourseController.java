@@ -1,6 +1,7 @@
 package com.kitten.coursera.controller;
 
 import com.kitten.coursera.dto.CourseDto;
+import com.kitten.coursera.dto.mapper.CourseMapper;
 import com.kitten.coursera.entity.Course;
 import com.kitten.coursera.service.CourseService;
 import jakarta.validation.Valid;
@@ -22,6 +23,7 @@ import static java.util.Objects.requireNonNullElse;
 public class CourseController {
 
     private final CourseService courseService;
+    private final CourseMapper courseMapper;
 
     @PostMapping("/createCourse")
     public ResponseEntity<Course> createCourse(@Valid @RequestBody CourseDto dto) {
@@ -31,17 +33,21 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Course>> readAll() {
+    public ResponseEntity<List<CourseDto>> readAll() {
+        List<Course>courses = courseService.readAllCourses();
+
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(courseService.readAllCourses());
+            .body(courseMapper.mapCoursesToDto(courses));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Course> readBy(@PathVariable("id") UUID id) {
+    public ResponseEntity<CourseDto> readBy(@PathVariable("id") UUID id) {
+        var course = courseService.findBy(id);
+
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(courseService.findBy(id));
+            .body(courseMapper.mapCourseToDto(course));
     }
 
     @GetMapping("/filter")
