@@ -26,8 +26,8 @@ public class Course {
     @Column(name = "c_author")
     public String author;
 
-    @OneToMany(mappedBy = "course", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<Lesson> lessons = new ArrayList<>();
+//    @OneToMany(mappedBy = "course", orphanRemoval = true, cascade = CascadeType.ALL)
+//    private List<Lesson> lessons = new ArrayList<>();
 
     public Course(String title, String description, String author) {
         this.title = title;
@@ -35,8 +35,8 @@ public class Course {
         this.author = author;
     }
 
-    public void addLesson(Lesson lesson){
-        lesson.setCourse(this);
-        this.lessons.add(lesson);
-    }
+//    public void addLesson(Lesson lesson){
+//        lesson.setCourse(this);
+//        this.lessons.add(lesson);
+//    }
 }

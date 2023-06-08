@@ -23,7 +23,7 @@ public class Lesson {
     private String title;
     @Column(name = "c_text")
     private String text;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", nullable = false)
-    private Course course;
+//    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "course_id", nullable = false)
+//    private Course course;
 }

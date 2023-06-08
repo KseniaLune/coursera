@@ -3,10 +3,12 @@ package com.kitten.coursera.service.impl;
 import com.kitten.coursera.dto.CourseDto;
 import com.kitten.coursera.entity.Course;
 import com.kitten.coursera.repo.CourseRepo;
+import com.kitten.coursera.repo.UserToCourseRepo;
 import com.kitten.coursera.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
     private final CourseRepo courseRepo;
+    private final UserToCourseRepo userToCourseRepo;
 
     @Override
     public Course create(CourseDto dto) {
@@ -47,12 +50,20 @@ public class CourseServiceImpl implements CourseService {
     public Course update(CourseDto courseDto) {
         return null;
     }
-//
-//    public List<Course> findByTitleWithPrefix(String prefix) {
-//        return courseRepo.findByTitleLike(prefix + "%");
-//    }
-//
-//
+
+    @Override
+    public List<Course> findByTitleWithPrefix(String prefix) {
+        return courseRepo.findByTitleLike(prefix + "%");
+    }
+
+    @Override
+    public Course updateCourse(UUID id, CourseDto dto) {
+        var course = findBy(id);
+        course.setTitle(dto.getTitle());
+        course.setDescription(dto.getDescription());
+        course.setAuthor(dto.getAuthor());
+        return courseRepo.save(course);
+    }
 //    public Course addCourse(CourseDto dto) {
 //        var course = Course.builder()
 //            .title(dto.getTitle())
@@ -62,20 +73,16 @@ public class CourseServiceImpl implements CourseService {
 //        return courseRepo.save(course);
 //    }
 //
-//    public Course updateCourse(UUID id, CourseDto dto) {
-//        var course = findBy(id).orElseThrow();
-//        course.setTitle(dto.getTitle());
-//        course.setDescription(dto.getDescription());
-//        course.setAuthor(dto.getAuthor());
-//        return courseRepo.save(course);
-//    }
 //
 //    @Override
 //    public Course updateCourse(Course course) {
 //       return courseRepo.save(course);
 //    }
 //
-//    public void deleteBy(UUID id) {
-//        courseRepo.deleteById(id);
-//    }
+    @Override
+    @Transactional
+    public void deleteBy(UUID id) {
+        userToCourseRepo.deleteByCourseId(id);
+        courseRepo.deleteById(id);
+    }
 }
