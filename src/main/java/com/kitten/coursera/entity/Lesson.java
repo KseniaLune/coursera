@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import java.util.UUID;
 
@@ -21,9 +22,9 @@ public class Lesson {
     private UUID id;
     @Column(name = "c_title")
     private String title;
-    @Column(name = "c_text")
+    @Column(name = "c_text", columnDefinition = "TEXT")
     private String text;
-//    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "course_id", nullable = false)
-//    private Course course;
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "c_course_id", nullable = false)
+    private Course course;
 }
