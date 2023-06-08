@@ -18,10 +18,11 @@ public interface CourseService {
     Course update(Course course);
     Course update (CourseDto courseDto);
 
-//    List<Course> findByTitleWithPrefix(String prefix);
+    List<Course> findByTitleWithPrefix(String prefix);
+
+    Course updateCourse(UUID id, CourseDto dto);
 //    Course addCourse(CourseDto dto);
-//    Course updateCourse(UUID id, CourseDto dto);
 //    Course updateCourse(Course course);
-//    void deleteBy(UUID id);
+    void deleteBy(UUID id);
 
 }

@@ -19,15 +19,10 @@ public interface UserService {
 
     void deleteBy(UUID id);
 
-    List<Course> findCourseByUserId(UUID userId);
-//
-//    List<Course> signUpForCourse(UUID userId, UUID courseId);
-//
-//    void testMethod(UUID id);
+    String signUp(UUID user_id, UUID course_id);
 
-//    AppUser updateCourse(UUID id, UserDto dto);
-//
-//
-//    Set<Course> findCourseByUserId(UUID id);
-//
+    List<Course> findCourseByUserId(UUID userId);
+
+    String breakCourse(UUID userId, UUID courseId);
+
 }

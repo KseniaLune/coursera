@@ -43,29 +43,27 @@ public class CourseController {
             .status(HttpStatus.OK)
             .body(courseService.findBy(id));
     }
-//
-//    @GetMapping("/filter")
-//    public ResponseEntity<List<Course>> getCoursesByTitlePrefix(@RequestParam(name = "titlePrefix", required = false) String titlePrefix) {
-//        return ResponseEntity
-//            .status(HttpStatus.OK)
-//            .body(courseService.findByTitleWithPrefix(requireNonNullElse(titlePrefix, "")));
-//    }
-//
-//
-//
-//
-//    @PutMapping("/{id}")
-//    public ResponseEntity<?> updateCourse(@PathVariable("id") UUID id,
-//                                          @Valid @RequestBody CourseDto dto) {
-//
-//        return ResponseEntity.status(HttpStatus.OK)
-//            .body(courseService.updateCourse(id, dto));
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<String> deleteCourse(@PathVariable("id") UUID id) {
-//        courseService.deleteBy(id);
-//        return ResponseEntity.ok("Курс успешно удален");
-//    }
-//
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<Course>> getCoursesByTitlePrefix(@RequestParam(name = "titlePrefix", required = false) String titlePrefix) {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(courseService.findByTitleWithPrefix(requireNonNullElse(titlePrefix, "")));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCourse(@PathVariable("id") UUID id,
+                                          @Valid @RequestBody CourseDto dto) {
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(courseService.updateCourse(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCourse(@PathVariable("id") UUID id) {
+        courseService.deleteBy(id);
+        return ResponseEntity.ok("Курс успешно удален");
+    }
+
 }
