@@ -1,15 +1,17 @@
 package com.kitten.coursera.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class UserDto {
 
 //    private UUID id;
     private String nickname;
+    @JsonIgnore
     private String password;
     private String fullName;
     private String eMail;

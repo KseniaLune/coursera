@@ -9,14 +9,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface LessonService {
-//    List<LessonDto> findAll();
+    //    List<LessonDto> findAll();
 //    public List<LessonDto> findByCourse(Course course);
 //    Optional<Lesson> findById(UUID id);
-LessonDto create(LessonDto dto);
+    Lesson create(LessonDto dto);
 
-    LessonDto findBy(UUID id);
+    Lesson findBy(UUID id);
 
-    List<LessonDto> findAllBy(UUID courseId);
+    List<Lesson> findAllBy(UUID courseId);
 //    Lesson update(UUID id, LessonDto dto);
 //    void delete(UUID id);
 }

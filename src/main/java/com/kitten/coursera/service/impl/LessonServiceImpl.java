@@ -24,10 +24,9 @@ public class LessonServiceImpl implements LessonService {
     private final CourseService courseService;
     private final LessonRepo lessonRepo;
 
-
     @Override
     @Transactional
-    public LessonDto create(LessonDto dto) {
+    public Lesson create(LessonDto dto) {
         var course = courseService.findBy(dto.getCourseId());
 
         Lesson lesson = Lesson.builder()
@@ -35,37 +34,22 @@ public class LessonServiceImpl implements LessonService {
             .text(dto.getText())
             .build();
         course.addLessonToCourse(lesson);
-        Lesson lessonSaved = lessonRepo.save(lesson);
+        lessonRepo.save(lesson);
 
-
-        LessonDto newDto = LessonDto.builder()
-            .title(lessonSaved.getTitle())
-            .text(lessonSaved.getText())
-            .courseId(lessonSaved.getCourse().getId())
-            .build();
-        return newDto;
+        return lesson;
 }
 
     @Override
-    public LessonDto findBy(UUID id) {
-        Lesson lesson = lessonRepo.findById(id).orElseThrow(()->new RuntimeException("we have big problem"));
-        LessonDto dto = LessonDto.builder()
-            .title(lesson.getTitle())
-            .text(lesson.getText())
-            .courseId(lesson.getCourse().getId())
-            .build();
-        return dto;
+    public Lesson findBy(UUID id) {
+        return lessonRepo.findById(id).orElseThrow(()->new RuntimeException("we have big problem"));
     }
 
     @Override
-    public List<LessonDto> findAllBy(UUID courseId) {
+    public List<Lesson> findAllBy(UUID courseId) {
         Course course = courseService.findBy(courseId);
         log.info("course list:{}"+course.getLessons());
 
-        List<LessonDto> result = course.getLessons().stream()
-            .map(l->new LessonDto(l.getTitle(), l.getText(), l.getCourse().getId()))
-            .collect(Collectors.toList());
-        return result;
+        return course.getLessons();
     }
     //    @Override
 //

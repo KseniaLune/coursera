@@ -13,12 +13,20 @@ import java.util.stream.Collectors;
 public class CourseMapper {
 
     public CourseDto mapCourseToDto(Course c) {
-        return new CourseDto(c.getTitle(), c.getDescription(), c.getAuthor());
+        return CourseDto.builder()
+            .title(c.getTitle())
+            .description(c.getDescription())
+            .author(c.getAuthor())
+            .build();
     }
 
     public List<CourseDto> mapCoursesToDto(List<Course> courses) {
         return courses.stream()
-            .map(c -> new CourseDto(c.getTitle(), c.getDescription(), c.getAuthor()))
+            .map(c -> CourseDto.builder()
+                .title(c.getTitle())
+                .description(c.getDescription())
+                .author(c.getAuthor())
+                .build())
             .collect(Collectors.toList());
     }
 }

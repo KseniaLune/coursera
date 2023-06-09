@@ -1,6 +1,7 @@
 package com.kitten.coursera.controller;
 
 import com.kitten.coursera.dto.LessonDto;
+import com.kitten.coursera.dto.mapper.LessonMapper;
 import com.kitten.coursera.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,32 +18,26 @@ import java.util.UUID;
 @RequestMapping("/lesson")
 public class LessonController {
     private final LessonService lessonService;
+    private final LessonMapper lessonMapper;
 
     @PostMapping("/create")
     public ResponseEntity<LessonDto> addNewLesson(@RequestBody LessonDto dto){
-        log.info("dto is: "+dto.toString());
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(lessonService.create(dto));
+            .body(lessonMapper.mapLessonToDto(lessonService.create(dto)));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<LessonDto> findLessonBy(@PathVariable("id")UUID id){
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(lessonService.findBy(id));
+            .body(lessonMapper.mapLessonToDto(lessonService.findBy(id)));
     }
     @GetMapping()
     public ResponseEntity<List<LessonDto>>findAllLessonBy(@RequestParam("courseId")UUID courseId){
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(lessonService.findAllBy(courseId));
+            .body(lessonMapper.mapLessonsToDto(lessonService.findAllBy(courseId)));
     }
-
-//
-//    @GetMapping
-//    public ResponseEntity<List<LessonDto>> readAll(){
-//        return ResponseEntity.ok().body(lessonService.findAll());
-//    }
 
 }
