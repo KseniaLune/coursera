@@ -1,8 +1,9 @@
 package com.kitten.coursera.controller;
 
+import com.kitten.coursera.dto.CourseDto;
 import com.kitten.coursera.dto.UserDto;
-import com.kitten.coursera.entity.AppUser;
-import com.kitten.coursera.entity.Course;
+import com.kitten.coursera.dto.mapper.CourseMapper;
+import com.kitten.coursera.dto.mapper.UserMapper;
 import com.kitten.coursera.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,32 +21,36 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
+    private final CourseMapper courseMapper;
 
     @GetMapping
-    public ResponseEntity<List<AppUser>> readAll(){
-        return ResponseEntity.ok().body(userService.findAll());
+    public ResponseEntity<List<UserDto>> readAll(){
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(userMapper.mapUsersToDto(userService.findAll()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AppUser> readBy(@PathVariable("id") UUID id){
+    public ResponseEntity<UserDto> readBy(@PathVariable("id") UUID id){
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(userService.getById(id));
+            .body(userMapper.mapUserToDto(userService.getById(id)));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<AppUser> create(@RequestBody UserDto dto){
+    public ResponseEntity<UserDto> create(@RequestBody UserDto dto){
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(userService.createUser(dto));
+            .body(userMapper.mapUserToDto(userService.createUser(dto)));
     }
 
     @PostMapping("/{id}/update")
-    public ResponseEntity<AppUser> update(@PathVariable("id")UUID id,
+    public ResponseEntity<UserDto> update(@PathVariable("id")UUID id,
                                           @RequestBody UserDto dto){
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(userService.updateUser(id, dto));
+            .body(userMapper.mapUserToDto(userService.updateUser(id, dto)));
     }
 
     @DeleteMapping("/{id}")
@@ -73,21 +78,9 @@ public class UserController {
     }
 
     @GetMapping("/allCourses")
-    public ResponseEntity<List<Course>>allCourses(@RequestParam("userId") UUID id){
+    public ResponseEntity<List<CourseDto>>readAllCourses(@RequestParam("userId") UUID id){
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(userService.findCourseByUserId(id));
+            .body(courseMapper.mapCoursesToDto(userService.findCourseByUserId(id)));
     }
-
-
-
-//    @GetMapping("/course/{id}")
-//    public ResponseEntity<?>readCourseByUserId(@PathVariable("id") UUID id){
-//        log.info("start method in controller");
-//        return ResponseEntity
-//            .status(HttpStatus.OK)
-//            .body(userService.findCourseByUserId(id));
-//    }
-
-
 }

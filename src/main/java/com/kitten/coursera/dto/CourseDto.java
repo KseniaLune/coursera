@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class CourseDto {
     @NotBlank(message = "title author has to be filled")
     @NotNull(message = "title author has to be filled")

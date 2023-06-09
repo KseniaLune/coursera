@@ -26,15 +26,17 @@ public class CourseController {
     private final CourseMapper courseMapper;
 
     @PostMapping("/createCourse")
-    public ResponseEntity<Course> createCourse(@Valid @RequestBody CourseDto dto) {
+    public ResponseEntity<CourseDto> createCourse(@Valid @RequestBody CourseDto dto) {
+        var course = courseService.create(dto);
+
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(courseService.create(dto));
+            .body(courseMapper.mapCourseToDto(course));
     }
 
     @GetMapping
     public ResponseEntity<List<CourseDto>> readAll() {
-        List<Course>courses = courseService.readAllCourses();
+        List<Course> courses = courseService.readAllCourses();
 
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -51,19 +53,20 @@ public class CourseController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<Course>> getCoursesByTitlePrefix(@RequestParam(name = "titlePrefix", required = false) String titlePrefix) {
+    public ResponseEntity<List<CourseDto>> getCoursesByTitlePrefix(@RequestParam(name = "titlePrefix", required = false) String titlePrefix) {
+        List<Course> courses = courseService.findByTitleWithPrefix(requireNonNullElse(titlePrefix, ""));
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(courseService.findByTitleWithPrefix(requireNonNullElse(titlePrefix, "")));
+            .body(courseMapper.mapCoursesToDto(courses));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCourse(@PathVariable("id") UUID id,
+    public ResponseEntity<CourseDto> updateCourse(@PathVariable("id") UUID id,
                                           @Valid @RequestBody CourseDto dto) {
-
+        Course course = courseService.updateCourse(id, dto);
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(courseService.updateCourse(id, dto));
+            .body(courseMapper.mapCourseToDto(course));
     }
 
     @DeleteMapping("/{id}")
