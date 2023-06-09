@@ -16,13 +16,11 @@ public interface CourseService {
     Course findBy(UUID id);
 
     Course update(Course course);
-    Course update (CourseDto courseDto);
 
     List<Course> findByTitleWithPrefix(String prefix);
 
     Course updateCourse(UUID id, CourseDto dto);
-//    Course addCourse(CourseDto dto);
-//    Course updateCourse(Course course);
+
     void deleteBy(UUID id);
 
 }

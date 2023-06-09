@@ -42,15 +42,6 @@ public class CourseServiceImpl implements CourseService {
         return courseRepo.findById(id).orElseThrow(()-> new RuntimeException("Course not found"));
     }
 
-    @Override
-    public Course update(Course course) {
-        return courseRepo.save(course);
-    }
-
-    @Override
-    public Course update(CourseDto courseDto) {
-        return null;
-    }
 
     @Override
     public List<Course> findByTitleWithPrefix(String prefix) {
@@ -63,6 +54,11 @@ public class CourseServiceImpl implements CourseService {
         course.setTitle(dto.getTitle());
         course.setDescription(dto.getDescription());
         course.setAuthor(dto.getAuthor());
+        return courseRepo.save(course);
+    }
+
+    @Override
+    public Course update(Course course) {
         return courseRepo.save(course);
     }
 
