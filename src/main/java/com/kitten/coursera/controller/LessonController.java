@@ -21,23 +21,39 @@ public class LessonController {
     private final LessonMapper lessonMapper;
 
     @PostMapping("/create")
-    public ResponseEntity<LessonDto> addNewLesson(@RequestBody LessonDto dto){
+    public ResponseEntity<LessonDto> addNewLesson(@RequestBody LessonDto dto) {
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(lessonMapper.mapLessonToDto(lessonService.create(dto)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LessonDto> findLessonBy(@PathVariable("id")UUID id){
+    public ResponseEntity<LessonDto> findLessonBy(@PathVariable("id") UUID id) {
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(lessonMapper.mapLessonToDto(lessonService.findBy(id)));
     }
+
     @GetMapping()
-    public ResponseEntity<List<LessonDto>>findAllLessonBy(@RequestParam("courseId")UUID courseId){
+    public ResponseEntity<List<LessonDto>> findAllLessonBy(@RequestParam("courseId") UUID courseId) {
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(lessonMapper.mapLessonsToDto(lessonService.findAllBy(courseId)));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<LessonDto> update(@PathVariable("id") UUID id, @RequestBody LessonDto dto) {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(lessonMapper.mapLessonToDto(lessonService.update(id, dto)));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable("id") UUID id){
+        lessonService.delete(id);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body("Lesson is deleting");
     }
 
 }
