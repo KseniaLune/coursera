@@ -19,7 +19,7 @@ public interface UserService {
 
     void deleteBy(UUID id);
 
-    String signUp(UUID user_id, UUID course_id);
+    String signUp(UUID userId, UUID courseId);
 
     List<Course> findCourseByUserId(UUID userId);
 

@@ -4,6 +4,7 @@ import com.kitten.coursera.dto.CourseDto;
 import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.dto.mapper.CourseMapper;
 import com.kitten.coursera.dto.mapper.UserMapper;
+import com.kitten.coursera.repo.UserRepo;
 import com.kitten.coursera.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,14 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final CourseMapper courseMapper;
+    private final UserRepo userRepo;
+
+    @GetMapping("/test/{email}")
+    public ResponseEntity<?> test(@PathVariable("email") String eMail){
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(userMapper.mapUserToDto(userRepo.findByeMail(eMail).orElseThrow(()->new RuntimeException("User not found"))));
+    }
 
     @GetMapping
     public ResponseEntity<List<UserDto>> readAll(){

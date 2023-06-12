@@ -31,4 +31,18 @@ public class UserMapper {
                 .build())
             .collect(Collectors.toList());
     }
+
+    public AppUser mapDtoToEntity(UserDto dto){
+        if (dto==null){
+            return null;
+        }
+        AppUser.AppUserBuilder user = AppUser.builder()
+            .nickname(dto.getNickname())
+            .password(dto.getPassword())
+            .fullName(dto.getFullName())
+            .eMail(dto.getEMail())
+            .phone(dto.getPhone());
+
+        return user.build();
+    }
 }

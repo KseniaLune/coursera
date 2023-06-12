@@ -30,5 +30,6 @@ public class AppUser {
 //    private Date dateRegistration;
     @Column(name = "c_phone")
     private Integer phone;
+    //TODO: Set<RoleUser> roles & alter table users
 
 }

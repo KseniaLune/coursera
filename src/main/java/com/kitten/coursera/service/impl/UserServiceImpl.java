@@ -1,42 +1,48 @@
 package com.kitten.coursera.service.impl;
 
 import com.kitten.coursera.dto.UserDto;
+import com.kitten.coursera.dto.mapper.UserMapper;
 import com.kitten.coursera.entity.AppUser;
 import com.kitten.coursera.entity.Course;
 import com.kitten.coursera.entity.UserToCourse;
 import com.kitten.coursera.repo.UserRepo;
 import com.kitten.coursera.repo.UserToCourseRepo;
-import com.kitten.coursera.service.CourseService;
 import com.kitten.coursera.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
-    private final CourseService courseService;
     private final UserToCourseRepo userCourseRepo;
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
     public AppUser createUser(UserDto dto) {
-        log.info("user dto:" + dto.toString());
-        var newUser = AppUser.builder()
-            .nickname(dto.getNickname())
-            .password(dto.getPassword())
-            .fullName(dto.getFullName())
-            .eMail(dto.getEMail())
-            .phone(dto.getPhone())
-            .build();
-        log.info("newUser: " + newUser.toString());
-        return userRepo.save(newUser);
+        var newUser = userMapper.mapDtoToEntity(dto);
+
+        if (userRepo.findByeMail(newUser.getEMail()).isPresent()){
+            throw new IllegalStateException("User already exist");
+        }
+        try {
+            newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        }catch (Exception e){
+            log.error("problem with encoding password");
+        }
+        userRepo.save(newUser);
+
+//        log.info("newUser: " + newUser.toString());
+        return newUser;
     }
 
     @Override
@@ -74,21 +80,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String signUp(UUID user_id, UUID course_id) {
+    public String signUp(UUID userId, UUID courseId) {
         String result;
-        if(userCourseRepo.findByUserIdAndCourseId(user_id, course_id)==null){
-            userRepo.signUp(user_id, course_id);
-            result = "It's OK";
-        }else{
-            result = "There is a problem, return later";
+        if (userRepo.findAllAvailableUsers(courseId).contains(userId)){
+            try {
+                userRepo.signUp(userId, courseId);
+                result = "Success";
+            } catch (Exception e){
+                result = "We have problem with BD";
+            }
+        }else {
+            result = "You are already signed up!";
         }
+
         return result;
     }
 
     @Override
     public List<Course> findCourseByUserId(UUID userId) {
-        List<Course> courses = userRepo.findCourseByUserId(userId);
-        return courses;
+        return userRepo.findCourseByUserId(userId);
     }
 
     @Override
@@ -103,40 +113,4 @@ public class UserServiceImpl implements UserService {
         }
         return result;
     }
-
-
-//
-//
-//    @Override
-//    public AppUser updateCourse(UUID id, UserDto dto) {
-//        var userApp = findBy(id).orElseThrow();
-//
-//        userApp.setNickname(dto.getNickname());
-//        userApp.setPassword(dto.getPassword());
-//        userApp.setFullName(dto.getFullName());
-//        userApp.setEMail(dto.getEMail());
-//        userApp.setPhone(dto.getPhone());
-//
-//        return userRepo.save(userApp);
-//    }
-//
-//    @Override
-//    public AppUser getById(UUID id) {
-//        return userRepo.findById(id).orElseThrow();
-//    }
-//
-//
-//
-//
-//
-//    @Override
-//    public Set<Course> findCourseByUserId(UUID id) {
-//        log.info("try to find users");
-//        AppUser user = userRepo.findById(id).get();
-//        log.info("user = {}", user);
-//        log.info("user course = {}", user.getCourses().toString());
-//        Set<Course> courses = user.getCourses();
-//        return courses;
-//    }
-//
 }
