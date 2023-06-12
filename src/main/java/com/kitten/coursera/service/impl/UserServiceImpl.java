@@ -113,4 +113,9 @@ public class UserServiceImpl implements UserService {
         }
         return result;
     }
+
+    @Override
+    public AppUser findByEMail(String eMail) {
+        return userRepo.findByeMail(eMail).orElseThrow(()-> new RuntimeException("User not found"));
+    }
 }

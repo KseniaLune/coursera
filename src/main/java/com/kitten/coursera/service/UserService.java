@@ -25,4 +25,5 @@ public interface UserService {
 
     String breakCourse(UUID userId, UUID courseId);
 
+    AppUser findByEMail(String eMail);
 }
