@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -28,6 +29,19 @@ public interface UserRepo extends JpaRepository<AppUser, UUID> {
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query(value = "INSERT INTO t_user_course (c_usr_id, c_course_id) values (:user_id, :course_id)", nativeQuery = true)
-    void signUp(@Param("user_id") UUID user_id, @Param("course_id") UUID course_id);
+    void signUp(@Param("user_id") UUID userId, @Param("course_id") UUID courseId);
+
+    @Query(value = "SELECT u.id "+
+        "FROM AppUser u "+
+        "where u.id not in ( "+
+        "SELECT u.id "+
+        "From AppUser u "+
+        "inner join UserToCourse tuc on u.id = tuc.userId "+
+        "inner join Course tc on tc.id = tuc.courseId "+
+        "where tc.id = :course_id)")
+    List<UUID> findAllAvailableUsers (@Param("course_id")UUID courseId);
+
+    Optional<AppUser> findByeMail(String eMail);
+
 
 }
