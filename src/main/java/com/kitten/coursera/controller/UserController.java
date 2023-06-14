@@ -4,6 +4,7 @@ import com.kitten.coursera.dto.CourseDto;
 import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.dto.mapper.CourseMapper;
 import com.kitten.coursera.dto.mapper.UserMapper;
+import com.kitten.coursera.entity.Role;
 import com.kitten.coursera.repo.UserRepo;
 import com.kitten.coursera.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -47,19 +48,25 @@ public class UserController {
             .body(userMapper.mapUserToDto(userService.getById(id)));
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<UserDto> create(@RequestBody UserDto dto){
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(userMapper.mapUserToDto(userService.createUser(dto)));
-    }
-
     @PostMapping("/{id}/update")
     public ResponseEntity<UserDto> update(@PathVariable("id")UUID id,
                                           @RequestBody UserDto dto){
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(userMapper.mapUserToDto(userService.updateUser(id, dto)));
+    }
+
+    @PostMapping("/{id}/add_role")
+    public  ResponseEntity<String> addNewRole(@PathVariable("id")UUID id,
+                                              @RequestBody String roleString){
+
+
+        Role.RoleName role = Role.RoleName.valueOf(roleString);
+       String result = userService.addNewRole(id, role);
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(result);
     }
 
     @DeleteMapping("/{id}")

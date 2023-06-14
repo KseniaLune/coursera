@@ -62,8 +62,7 @@ public class ApplicationConfig {
                     .requestMatchers(
                         "/course",
                         "/course/filter",
-                        "/auth/**",
-                        "/users/create"
+                        "/auth/**"
                         ).permitAll()
                     .anyRequest().authenticated()
             )

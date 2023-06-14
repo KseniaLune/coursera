@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,13 +45,9 @@ public class UserServiceImpl implements UserService {
             log.error("problem with encoding password");
         }
 
-        Role roleUser = roleRepo.findByRole(Role.RoleName.ROLE_STUDENT)
-            .orElseThrow(()->new RuntimeException("Role doesn't exist"));
+        Role roleUser = this.findRole(Role.RoleName.ROLE_STUDENT);
 
-        log.info("role user = "+roleUser.toString());
         userRepo.save(newUser);
-
-
         newUser.addRolesToUser(roleUser);
 
 
@@ -130,5 +127,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public AppUser findByEMail(String eMail) {
         return userRepo.findByeMail(eMail).orElseThrow(()-> new RuntimeException("User not found"));
+    }
+
+    @Override
+    public String addNewRole(UUID id, Role.RoleName roleName) {
+        String result;
+        AppUser user = this.getById(id);
+        Role role = this.findRole(roleName);
+        try {
+            user.addRolesToUser(role);
+            userRepo.save(user);
+        } catch (Exception e){
+            result = e.getMessage();
+            return result;
+        }
+        result = "Role is added";
+        return result;
+
+
+
+    }
+
+    private Role findRole (Role.RoleName roleName){
+       return roleRepo.findByRole(roleName)
+            .orElseThrow(()->new RuntimeException("Role doesn't exist"));
     }
 }
