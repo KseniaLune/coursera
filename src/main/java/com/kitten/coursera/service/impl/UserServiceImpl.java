@@ -4,7 +4,9 @@ import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.dto.mapper.UserMapper;
 import com.kitten.coursera.entity.AppUser;
 import com.kitten.coursera.entity.Course;
+import com.kitten.coursera.entity.Role;
 import com.kitten.coursera.entity.UserToCourse;
+import com.kitten.coursera.repo.RoleRepo;
 import com.kitten.coursera.repo.UserRepo;
 import com.kitten.coursera.repo.UserToCourseRepo;
 import com.kitten.coursera.service.UserService;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -25,6 +28,7 @@ public class UserServiceImpl implements UserService {
     private final UserToCourseRepo userCourseRepo;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepo roleRepo;
 
     @Override
     @Transactional
@@ -39,7 +43,16 @@ public class UserServiceImpl implements UserService {
         }catch (Exception e){
             log.error("problem with encoding password");
         }
+
+        Role roleUser = roleRepo.findByRole(Role.RoleName.ROLE_STUDENT)
+            .orElseThrow(()->new RuntimeException("Role doesn't exist"));
+
+        log.info("role user = "+roleUser.toString());
         userRepo.save(newUser);
+
+
+        newUser.addRolesToUser(roleUser);
+
 
 //        log.info("newUser: " + newUser.toString());
         return newUser;

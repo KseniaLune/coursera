@@ -4,6 +4,7 @@ import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.entity.AppUser;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +42,8 @@ public class UserMapper {
             .password(dto.getPassword())
             .fullName(dto.getFullName())
             .eMail(dto.getEMail())
-            .phone(dto.getPhone());
+            .phone(dto.getPhone())
+            .roles(new HashSet<>());
 
         return user.build();
     }

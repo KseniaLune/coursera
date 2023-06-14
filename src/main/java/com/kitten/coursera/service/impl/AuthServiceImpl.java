@@ -7,10 +7,14 @@ import com.kitten.coursera.jwt.TokenProvider;
 import com.kitten.coursera.service.AuthService;
 import com.kitten.coursera.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -22,25 +26,27 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public JwtResponse login(JwtRequest request) {
 
+        log.info("jwt request: {}" + request.toString());
+
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEMail(), request.getPassword()));
 
         AppUser user = userService.findByEMail(request.getEMail());
+        log.info("user: {}"+ user.toString());
 
-        String accessToken = tokenProvider.createAccessToken(user.getId(), user.getEMail());
+        String accessToken = tokenProvider.createAccessToken(user.getId(), user.getEMail(), user.getRoles());
         String refreshToken = tokenProvider.createRefreshToken(user.getId(), user.getEMail());
 
         JwtResponse jwtResponse = JwtResponse.builder()
             .eMail(user.getEMail())
             .accessToken(accessToken)
             .refreshToken(refreshToken)
-        .build();
+            .build();
 
         return jwtResponse;
     }
 
     @Override
     public JwtResponse refresh(String refreshToken) {
-//        return tokenProvider.refreshUserToken(refreshToken);
-        return null;
+        return tokenProvider.refreshUserToken(refreshToken);
     }
 }

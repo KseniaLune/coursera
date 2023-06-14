@@ -3,6 +3,7 @@ package com.kitten.coursera.service;
 import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.entity.AppUser;
 import com.kitten.coursera.entity.Course;
+import com.kitten.coursera.entity.Role;
 
 import java.util.List;
 import java.util.UUID;
