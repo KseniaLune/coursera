@@ -27,4 +27,6 @@ public interface UserService {
     String breakCourse(UUID userId, UUID courseId);
 
     AppUser findByEMail(String eMail);
+
+    String addNewRole(UUID id, Role.RoleName role);
 }
