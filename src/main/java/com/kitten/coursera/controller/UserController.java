@@ -10,6 +10,7 @@ import com.kitten.coursera.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,7 @@ public class UserController {
     public ResponseEntity<List<UserDto>> readAll(){
         return ResponseEntity
             .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(userMapper.mapUsersToDto(userService.findAll()));
     }
 
@@ -40,6 +42,7 @@ public class UserController {
     public ResponseEntity<UserDto> readBy(@PathVariable("id") UUID id){
         return ResponseEntity
             .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(userMapper.mapUserToDto(userService.getById(id)));
     }
 
@@ -48,6 +51,7 @@ public class UserController {
                                           @RequestBody UserDto dto){
         return ResponseEntity
             .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(userMapper.mapUserToDto(userService.updateUser(id, dto)));
     }
 
@@ -60,12 +64,14 @@ public class UserController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
+            //TODO:доработать этот метод
             .body(result);
     }
     @Secured({"ROLE_ADMIN", "ROLE_OWNER"})
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUsers(@PathVariable("id") UUID id) {
         userService.deleteBy(id);
+        //TODO:доработать этот метод
         return ResponseEntity.ok("Юзер успешно удален");
     }
 
@@ -75,6 +81,7 @@ public class UserController {
       String result =  userService.signUp(userId, courseId);
         return ResponseEntity
             .status(HttpStatus.OK)
+            //TODO:доработать этот метод
             .body(result);
     }
 
@@ -84,6 +91,7 @@ public class UserController {
         String result = userService.breakCourse(userId, courseId);
         return ResponseEntity
             .status(HttpStatus.OK)
+            //TODO:доработать этот метод
             .body(result);
     }
 
@@ -91,6 +99,7 @@ public class UserController {
     public ResponseEntity<List<CourseDto>>readAllCourses(@RequestParam("userId") UUID id){
         return ResponseEntity
             .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(courseMapper.mapCoursesToDto(userService.findCourseByUserId(id)));
     }
 }
