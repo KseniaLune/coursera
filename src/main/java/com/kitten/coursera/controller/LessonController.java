@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class LessonController {
     private final LessonService lessonService;
     private final LessonMapper lessonMapper;
 
+    @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
     @PostMapping("/create")
     public ResponseEntity<LessonDto> addNewLesson(@RequestBody LessonDto dto) {
         return ResponseEntity
@@ -40,7 +42,7 @@ public class LessonController {
             .status(HttpStatus.OK)
             .body(lessonMapper.mapLessonsToDto(lessonService.findAllBy(courseId)));
     }
-
+    @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
     @PutMapping("/{id}")
     public ResponseEntity<LessonDto> update(@PathVariable("id") UUID id, @RequestBody LessonDto dto) {
         return ResponseEntity
@@ -48,6 +50,7 @@ public class LessonController {
             .body(lessonMapper.mapLessonToDto(lessonService.update(id, dto)));
     }
 
+    @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") UUID id){
         lessonService.delete(id);

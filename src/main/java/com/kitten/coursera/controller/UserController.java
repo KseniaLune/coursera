@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,13 +28,7 @@ public class UserController {
     private final CourseMapper courseMapper;
     private final UserRepo userRepo;
 
-    @GetMapping("/test/{email}")
-    public ResponseEntity<?> test(@PathVariable("email") String eMail){
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(userMapper.mapUserToDto(userRepo.findByeMail(eMail).orElseThrow(()->new RuntimeException("User not found"))));
-    }
-
+    @Secured({"ROLE_ADMIN", "ROLE_OWNER"})
     @GetMapping
     public ResponseEntity<List<UserDto>> readAll(){
         return ResponseEntity
@@ -56,11 +51,10 @@ public class UserController {
             .body(userMapper.mapUserToDto(userService.updateUser(id, dto)));
     }
 
+    @Secured({"ROLE_ADMIN", "ROLE_OWNER"})
     @PostMapping("/{id}/add_role")
     public  ResponseEntity<String> addNewRole(@PathVariable("id")UUID id,
                                               @RequestBody String roleString){
-
-
         Role.RoleName role = Role.RoleName.valueOf(roleString);
        String result = userService.addNewRole(id, role);
 
@@ -68,7 +62,7 @@ public class UserController {
             .status(HttpStatus.OK)
             .body(result);
     }
-
+    @Secured({"ROLE_ADMIN", "ROLE_OWNER"})
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUsers(@PathVariable("id") UUID id) {
         userService.deleteBy(id);
