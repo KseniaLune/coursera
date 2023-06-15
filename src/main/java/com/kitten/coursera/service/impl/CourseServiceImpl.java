@@ -1,7 +1,9 @@
 package com.kitten.coursera.service.impl;
 
+import com.kitten.coursera.components.ResponseJson;
 import com.kitten.coursera.dto.CourseDto;
 import com.kitten.coursera.entity.Course;
+import com.kitten.coursera.exeption.ExBody;
 import com.kitten.coursera.repo.CourseRepo;
 import com.kitten.coursera.repo.UserToCourseRepo;
 import com.kitten.coursera.service.CourseService;
@@ -64,8 +66,19 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public void deleteBy(UUID id) {
-        userToCourseRepo.deleteByCourseId(id);
-        courseRepo.deleteById(id);
+    public ResponseJson deleteBy(UUID id) {
+        if (courseRepo.findById(id).isEmpty()){
+            return new ResponseJson(null, new ExBody("Данного курса не существует"));
+        }
+        try {
+
+            userToCourseRepo.deleteByCourseId(id);
+            courseRepo.deleteById(id);
+            return new ResponseJson("Курс успешно удалён", null);
+        } catch (Exception e){
+            return new ResponseJson(null, new ExBody(e.getMessage()));
+        }
+
+
     }
 }

@@ -1,5 +1,6 @@
 package com.kitten.coursera.controller;
 
+import com.kitten.coursera.components.ResponseJson;
 import com.kitten.coursera.dto.CourseDto;
 import com.kitten.coursera.dto.mapper.CourseMapper;
 import com.kitten.coursera.entity.Course;
@@ -8,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,6 +36,7 @@ public class CourseController {
         var course = courseService.create(dto);
         return ResponseEntity
             .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(courseMapper.mapCourseToDto(course));
     }
 
@@ -43,7 +46,9 @@ public class CourseController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(courseMapper.mapCoursesToDto(courses));
+
     }
 
     @GetMapping("/{id}")
@@ -52,6 +57,7 @@ public class CourseController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(courseMapper.mapCourseToDto(course));
     }
 
@@ -60,6 +66,7 @@ public class CourseController {
         List<Course> courses = courseService.findByTitleWithPrefix(requireNonNullElse(titlePrefix, ""));
         return ResponseEntity
             .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(courseMapper.mapCoursesToDto(courses));
     }
 
@@ -70,14 +77,17 @@ public class CourseController {
         Course course = courseService.updateCourse(id, dto);
         return ResponseEntity
             .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(courseMapper.mapCourseToDto(course));
     }
 
     @Secured({"ROLE_ADMIN","ROLE_OWNER"})
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCourse(@PathVariable("id") UUID id) {
-        courseService.deleteBy(id);
-        return ResponseEntity.ok("Курс успешно удален");
+    public ResponseEntity<ResponseJson> deleteCourse(@PathVariable("id") UUID id) {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(courseService.deleteBy(id));
     }
 
 }
