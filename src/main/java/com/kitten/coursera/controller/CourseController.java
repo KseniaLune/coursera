@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,10 +28,10 @@ public class CourseController {
     private final CourseService courseService;
     private final CourseMapper courseMapper;
 
+    @Secured({"ROLE_ADMIN","ROLE_OWNER"})
     @PostMapping("/createCourse")
     public ResponseEntity<CourseDto> createCourse(@Valid @RequestBody CourseDto dto) {
         var course = courseService.create(dto);
-
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(courseMapper.mapCourseToDto(course));
@@ -60,6 +63,7 @@ public class CourseController {
             .body(courseMapper.mapCoursesToDto(courses));
     }
 
+    @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
     @PutMapping("/{id}")
     public ResponseEntity<CourseDto> updateCourse(@PathVariable("id") UUID id,
                                           @Valid @RequestBody CourseDto dto) {
@@ -69,6 +73,7 @@ public class CourseController {
             .body(courseMapper.mapCourseToDto(course));
     }
 
+    @Secured({"ROLE_ADMIN","ROLE_OWNER"})
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCourse(@PathVariable("id") UUID id) {
         courseService.deleteBy(id);
