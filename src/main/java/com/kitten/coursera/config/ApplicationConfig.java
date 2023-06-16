@@ -41,8 +41,7 @@ public class ApplicationConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
 
-//            .csrf(h -> h.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-            .csrf(AbstractHttpConfigurer::disable)
+            .csrf(h -> h.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             .cors(cors -> {
             })
             .httpBasic(AbstractHttpConfigurer::disable)
