@@ -1,5 +1,6 @@
 package com.kitten.coursera.controller;
 
+import com.kitten.coursera.components.ResponseJson;
 import com.kitten.coursera.dto.LessonDto;
 import com.kitten.coursera.dto.mapper.LessonMapper;
 import com.kitten.coursera.service.LessonService;
@@ -57,12 +58,11 @@ public class LessonController {
 
     @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") UUID id){
-        lessonService.delete(id);
+    public ResponseEntity<ResponseJson> delete(@PathVariable("id") UUID id){
         return ResponseEntity
             .status(HttpStatus.OK)
-            //TODO: доработать этот метод
-            .body("Lesson is deleting");
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(lessonService.delete(id));
     }
 
 }

@@ -31,7 +31,7 @@ public class CourseController {
     private final CourseMapper courseMapper;
 
     @Secured({"ROLE_ADMIN","ROLE_OWNER"})
-    @PostMapping("/createCourse")
+    @PostMapping("/create")
     public ResponseEntity<CourseDto> createCourse(@Valid @RequestBody CourseDto dto) {
         var course = courseService.create(dto);
         return ResponseEntity

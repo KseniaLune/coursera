@@ -1,5 +1,6 @@
 package com.kitten.coursera.service;
 
+import com.kitten.coursera.components.ResponseJson;
 import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.entity.AppUser;
 import com.kitten.coursera.entity.Course;
@@ -18,15 +19,15 @@ public interface UserService {
 
     AppUser updateUser(UUID id,UserDto dto);
 
-    void deleteBy(UUID id);
+    ResponseJson deleteBy(UUID id);
 
-    String signUp(UUID userId, UUID courseId);
+    ResponseJson signUp(UUID userId, UUID courseId);
 
     List<Course> findCourseByUserId(UUID userId);
 
-    String breakCourse(UUID userId, UUID courseId);
+    ResponseJson breakCourse(UUID userId, UUID courseId);
 
     AppUser findByEMail(String eMail);
 
-    String addNewRole(UUID id, Role.RoleName role);
+    ResponseJson addNewRole(UUID id, Role.RoleName role);
 }
