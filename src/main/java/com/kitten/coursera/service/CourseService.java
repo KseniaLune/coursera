@@ -1,6 +1,5 @@
 package com.kitten.coursera.service;
 
-import com.kitten.coursera.components.ResponseJson;
 import com.kitten.coursera.dto.CourseDto;
 import com.kitten.coursera.entity.Course;
 
@@ -22,6 +21,6 @@ public interface CourseService {
 
     Course updateCourse(UUID id, CourseDto dto);
 
-    ResponseJson deleteBy(UUID id);
+    void deleteBy(UUID id);
 
 }
