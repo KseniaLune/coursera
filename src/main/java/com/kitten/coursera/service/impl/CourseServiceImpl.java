@@ -1,7 +1,9 @@
 package com.kitten.coursera.service.impl;
 
+import com.kitten.coursera.domain.exception.ResourceMappingEx;
+import com.kitten.coursera.domain.exception.ResourceNotFoundEx;
 import com.kitten.coursera.dto.CourseDto;
-import com.kitten.coursera.entity.Course;
+import com.kitten.coursera.domain.entity.Course;
 import com.kitten.coursera.repo.CourseRepo;
 import com.kitten.coursera.repo.UserToCourseRepo;
 import com.kitten.coursera.service.CourseService;
@@ -9,11 +11,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.ResourceAccessException;
 
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -29,17 +31,27 @@ public class CourseServiceImpl implements CourseService {
             .description(dto.getDescription())
             .author(dto.getAuthor())
             .build();
-       return courseRepo.save(course);
+        try {
+            return courseRepo.save(course);
+        } catch (Exception e){
+            throw  new ResourceMappingEx("Error while saving course in DB.");
+        }
+
     }
 
     @Override
     public List<Course> readAllCourses() {
-        return courseRepo.findAll();
+        try {
+            return courseRepo.findAll();
+        } catch (Exception e){
+            throw  new ResourceMappingEx("Error while finding courses in DB.");
+        }
+
     }
 
     @Override
     public Course findBy(UUID id) {
-        return courseRepo.findById(id).orElseThrow(()-> new RuntimeException("Course not found"));
+        return courseRepo.findById(id).orElseThrow(()-> new ResourceNotFoundEx("Course not found"));
     }
 
 
@@ -50,22 +62,37 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course updateCourse(UUID id, CourseDto dto) {
-        var course = findBy(id);
+
+        var course = this.findBy(id);
         course.setTitle(dto.getTitle());
         course.setDescription(dto.getDescription());
         course.setAuthor(dto.getAuthor());
-        return courseRepo.save(course);
+
+        try {
+            return courseRepo.save(course);
+        } catch (Exception e){
+            throw  new ResourceMappingEx("Error while updating course.");
+        }
     }
 
     @Override
     public Course update(Course course) {
-        return courseRepo.save(course);
+        try {
+            return courseRepo.save(course);
+        } catch (Exception e){
+            throw  new ResourceMappingEx("Error while updating course.");
+        }
     }
 
     @Override
     @Transactional
     public void deleteBy(UUID id) {
-        userToCourseRepo.deleteByCourseId(id);
-        courseRepo.deleteById(id);
+
+        try {
+            userToCourseRepo.deleteByCourseId(id);
+            courseRepo.deleteById(id);
+        } catch (Exception e){
+            throw  new ResourceMappingEx("Error while deleting course.");
+        }
     }
 }

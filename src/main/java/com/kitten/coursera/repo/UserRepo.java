@@ -1,7 +1,7 @@
 package com.kitten.coursera.repo;
 
-import com.kitten.coursera.entity.AppUser;
-import com.kitten.coursera.entity.Course;
+import com.kitten.coursera.domain.entity.AppUser;
+import com.kitten.coursera.domain.entity.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

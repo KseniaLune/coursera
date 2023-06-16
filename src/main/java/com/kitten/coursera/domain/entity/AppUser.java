@@ -1,8 +1,7 @@
-package com.kitten.coursera.entity;
+package com.kitten.coursera.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 

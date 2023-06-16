@@ -2,7 +2,7 @@ package com.kitten.coursera.controller;
 
 import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.dto.mapper.UserMapper;
-import com.kitten.coursera.entity.AppUser;
+import com.kitten.coursera.domain.entity.AppUser;
 import com.kitten.coursera.jwt.JwtRequest;
 import com.kitten.coursera.jwt.JwtResponse;
 import com.kitten.coursera.service.AuthService;

@@ -1,6 +1,6 @@
 package com.kitten.coursera.components;
 
-import com.kitten.coursera.entity.Course;
+import com.kitten.coursera.domain.entity.Course;
 import com.kitten.coursera.repo.CourseRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

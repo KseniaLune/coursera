@@ -2,11 +2,9 @@ package com.kitten.coursera.service;
 
 import com.kitten.coursera.components.ResponseJson;
 import com.kitten.coursera.dto.LessonDto;
-import com.kitten.coursera.entity.Course;
-import com.kitten.coursera.entity.Lesson;
+import com.kitten.coursera.domain.entity.Lesson;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface LessonService {

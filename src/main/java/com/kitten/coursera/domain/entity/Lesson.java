@@ -1,11 +1,10 @@
-package com.kitten.coursera.entity;
+package com.kitten.coursera.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
 
 import java.util.UUID;
 

@@ -1,8 +1,8 @@
 package com.kitten.coursera.jwt;
 
 
-import com.kitten.coursera.entity.AppUser;
-import com.kitten.coursera.entity.Role;
+import com.kitten.coursera.domain.entity.AppUser;
+import com.kitten.coursera.domain.entity.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

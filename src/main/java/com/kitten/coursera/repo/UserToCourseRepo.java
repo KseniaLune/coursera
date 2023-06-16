@@ -1,6 +1,6 @@
 package com.kitten.coursera.repo;
 
-import com.kitten.coursera.entity.UserToCourse;
+import com.kitten.coursera.domain.entity.UserToCourse;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

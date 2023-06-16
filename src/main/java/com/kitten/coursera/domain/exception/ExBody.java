@@ -1,4 +1,4 @@
-package com.kitten.coursera.exeption;
+package com.kitten.coursera.domain.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,5 +1,6 @@
 package com.kitten.coursera.exeption;
 
+import com.kitten.coursera.domain.exception.ExBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

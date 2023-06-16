@@ -1,12 +1,8 @@
 package com.kitten.coursera.dto;
 
-import com.kitten.coursera.entity.Course;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor

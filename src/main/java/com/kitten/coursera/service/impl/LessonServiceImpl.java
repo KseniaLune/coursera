@@ -1,10 +1,12 @@
 package com.kitten.coursera.service.impl;
 
 import com.kitten.coursera.components.ResponseJson;
+import com.kitten.coursera.domain.exception.ResourceMappingEx;
+import com.kitten.coursera.domain.exception.ResourceNotFoundEx;
 import com.kitten.coursera.dto.LessonDto;
-import com.kitten.coursera.entity.Course;
-import com.kitten.coursera.entity.Lesson;
-import com.kitten.coursera.exeption.ExBody;
+import com.kitten.coursera.domain.entity.Course;
+import com.kitten.coursera.domain.entity.Lesson;
+import com.kitten.coursera.domain.exception.ExBody;
 import com.kitten.coursera.repo.LessonRepo;
 import com.kitten.coursera.service.CourseService;
 import com.kitten.coursera.service.LessonService;
@@ -34,21 +36,26 @@ public class LessonServiceImpl implements LessonService {
             .text(dto.getText())
             .build();
         course.addLessonToCourse(lesson);
-        lessonRepo.save(lesson);
-
+        try {
+            lessonRepo.save(lesson);
+        } catch (Exception e){
+            throw  new ResourceMappingEx("Error while saving lesson in DB.");
+        }
         return lesson;
     }
 
     @Override
     public Lesson findBy(UUID id) {
-        return lessonRepo.findById(id).orElseThrow(() -> new RuntimeException("we have big problem"));
+        return lessonRepo.findById(id).orElseThrow(() -> new RuntimeException("Error while finding lesson by Id."));
     }
 
     @Override
     public List<Lesson> findAllBy(UUID courseId) {
-        Course course = courseService.findBy(courseId);
-
-        return course.getLessons();
+        try {
+            return courseService.findBy(courseId).getLessons();
+        } catch (Exception e){
+            throw  new ResourceMappingEx("Error while finding course in DB.");
+        }
     }
 
     @Override
@@ -56,8 +63,11 @@ public class LessonServiceImpl implements LessonService {
         var lesson = this.findBy(id);
         lesson.setTitle(dto.getTitle());
         lesson.setText(dto.getText());
-        lesson.setCourse(courseService.findBy(dto.getCourseId()));
-
+        try {
+            lesson.setCourse(courseService.findBy(dto.getCourseId()));
+        } catch (Exception e){
+            throw  new ResourceMappingEx("Error while finding course in DB.");
+        }
         return lessonRepo.save(lesson);
     }
 
@@ -65,13 +75,13 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public ResponseJson delete(UUID id) {
         if (lessonRepo.findById(id).isEmpty()) {
-            return new ResponseJson(null, new ExBody("This lesson doesn't exist"));
+            return new ResponseJson(null, new ResourceNotFoundEx("Lesson doesn't exist."));
         }
         try {
             lessonRepo.deleteById(id);
             return new ResponseJson("Lesson is deleting", null);
         } catch (Exception e) {
-            return new ResponseJson(null, new ExBody(e.getMessage()));
+            return new ResponseJson(null, new Exception(e.getMessage()));
         }
 
     }

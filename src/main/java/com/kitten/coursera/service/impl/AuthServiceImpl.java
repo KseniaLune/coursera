@@ -1,6 +1,6 @@
 package com.kitten.coursera.service.impl;
 
-import com.kitten.coursera.entity.AppUser;
+import com.kitten.coursera.domain.entity.AppUser;
 import com.kitten.coursera.jwt.JwtRequest;
 import com.kitten.coursera.jwt.JwtResponse;
 import com.kitten.coursera.jwt.TokenProvider;
@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
-
-import java.nio.file.AccessDeniedException;
 
 @Slf4j
 @Service

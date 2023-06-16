@@ -1,13 +1,15 @@
 package com.kitten.coursera.service.impl;
 
 import com.kitten.coursera.components.ResponseJson;
+import com.kitten.coursera.domain.exception.ResourceMappingEx;
+import com.kitten.coursera.domain.exception.ResourceNotFoundEx;
 import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.dto.mapper.UserMapper;
-import com.kitten.coursera.entity.AppUser;
-import com.kitten.coursera.entity.Course;
-import com.kitten.coursera.entity.Role;
-import com.kitten.coursera.entity.UserToCourse;
-import com.kitten.coursera.exeption.ExBody;
+import com.kitten.coursera.domain.entity.AppUser;
+import com.kitten.coursera.domain.entity.Course;
+import com.kitten.coursera.domain.entity.Role;
+import com.kitten.coursera.domain.entity.UserToCourse;
+import com.kitten.coursera.domain.exception.ExBody;
 import com.kitten.coursera.repo.RoleRepo;
 import com.kitten.coursera.repo.UserRepo;
 import com.kitten.coursera.repo.UserToCourseRepo;
@@ -19,8 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public ResponseJson deleteBy(UUID id) {
         if (userRepo.findById(id).isEmpty()) {
-            return new ResponseJson(null, new ExBody("This user doesn't exist"));
+            return new ResponseJson(null, new ResourceNotFoundEx("This user doesn't exist"));
         }
         try {
             userToCourseRepo.deleteByUserId(id);
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
 
             return new ResponseJson("User is deleting", null);
         } catch (Exception e) {
-            return new ResponseJson(null, new ExBody(e.getMessage()));
+            return new ResponseJson(null, new ResourceMappingEx("Error while deleting user."));
         }
     }
 
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
                 userRepo.signUp(userId, courseId);
                 return new ResponseJson("Success", null);
             } catch (Exception e) {
-                return new ResponseJson(null, new ExBody("We have problem with BD"));
+                return new ResponseJson(null, new ResourceMappingEx("Error while add data in DB."));
             }
         } else {
             return new ResponseJson("You are already signed up!", null);
@@ -129,7 +129,7 @@ public class UserServiceImpl implements UserService {
             userCourseRepo.delete(userToCourse);
             return new ResponseJson("You leave the course", null);
         } else {
-            return new ResponseJson(null, new ExBody("There is a problem, return later"));
+            return new ResponseJson(null, new ResourceMappingEx("Error while deleting data in DB."));
         }
     }
 
@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
             userRepo.save(user);
             return new ResponseJson("Role is added", null);
         } catch (Exception e) {
-            return new ResponseJson(null, new ExBody(e.getMessage()));
+            return new ResponseJson(null, new RuntimeException(e.getMessage()));
         }
     }
 

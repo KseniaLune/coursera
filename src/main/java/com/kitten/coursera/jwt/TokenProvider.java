@@ -1,8 +1,8 @@
 package com.kitten.coursera.jwt;
 
-import com.kitten.coursera.entity.AppUser;
-import com.kitten.coursera.entity.Role;
-import com.kitten.coursera.exeption.AccessDeniedEx;
+import com.kitten.coursera.domain.entity.AppUser;
+import com.kitten.coursera.domain.entity.Role;
+import com.kitten.coursera.domain.exception.AccessDeniedEx;
 import com.kitten.coursera.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -16,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.security.Key;
 import java.sql.Date;
 import java.time.Instant;

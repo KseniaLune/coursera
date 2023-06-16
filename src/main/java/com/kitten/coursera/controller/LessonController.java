@@ -7,6 +7,7 @@ import com.kitten.coursera.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ public class LessonController {
     public ResponseEntity<LessonDto> addNewLesson(@RequestBody LessonDto dto) {
         return ResponseEntity
             .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(lessonMapper.mapLessonToDto(lessonService.create(dto)));
     }
 
@@ -34,6 +36,7 @@ public class LessonController {
     public ResponseEntity<LessonDto> findLessonBy(@PathVariable("id") UUID id) {
         return ResponseEntity
             .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(lessonMapper.mapLessonToDto(lessonService.findBy(id)));
     }
 
@@ -41,6 +44,7 @@ public class LessonController {
     public ResponseEntity<List<LessonDto>> findAllLessonBy(@RequestParam("courseId") UUID courseId) {
         return ResponseEntity
             .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(lessonMapper.mapLessonsToDto(lessonService.findAllBy(courseId)));
     }
     @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
@@ -48,6 +52,7 @@ public class LessonController {
     public ResponseEntity<LessonDto> update(@PathVariable("id") UUID id, @RequestBody LessonDto dto) {
         return ResponseEntity
             .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(lessonMapper.mapLessonToDto(lessonService.update(id, dto)));
     }
 

@@ -1,7 +1,7 @@
 package com.kitten.coursera.dto.mapper;
 
 import com.kitten.coursera.dto.UserDto;
-import com.kitten.coursera.entity.AppUser;
+import com.kitten.coursera.domain.entity.AppUser;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;

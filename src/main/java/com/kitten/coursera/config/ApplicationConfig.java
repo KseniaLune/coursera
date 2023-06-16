@@ -18,7 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableMethodSecurity
@@ -41,14 +40,15 @@ public class ApplicationConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
 
-            .csrf(h -> h.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+//            .csrf(h -> h.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+            .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> {
             })
             .httpBasic(AbstractHttpConfigurer::disable)
             .sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling((eh) -> eh.authenticationEntryPoint((request, response, authException) -> {
                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                        response.getWriter().write("Unauthorized");
+                        response.getWriter().write("You must be authorized!");
 //                        response.sendRedirect("http://localhost:8080/auth/sign_in");
                     })
                     .accessDeniedHandler((request, response, accessDeniedException) -> {
