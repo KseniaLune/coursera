@@ -49,8 +49,11 @@ public class Course {
             ", author='" + author + '\'' +
             '}';
     }
-    //    public void addLesson(Lesson lesson){
-//        lesson.setCourse(this);
-//        this.lessons.add(lesson);
-//    }
+
+    public Course(UUID id, String title, String description, String author) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.author = author;
+    }
 }
