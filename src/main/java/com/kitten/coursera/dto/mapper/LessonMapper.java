@@ -1,7 +1,7 @@
 package com.kitten.coursera.dto.mapper;
 
 import com.kitten.coursera.dto.LessonDto;
-import com.kitten.coursera.entity.Lesson;
+import com.kitten.coursera.domain.entity.Lesson;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

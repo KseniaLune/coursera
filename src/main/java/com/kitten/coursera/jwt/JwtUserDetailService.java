@@ -1,6 +1,6 @@
 package com.kitten.coursera.jwt;
 
-import com.kitten.coursera.entity.AppUser;
+import com.kitten.coursera.domain.entity.AppUser;
 import com.kitten.coursera.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
