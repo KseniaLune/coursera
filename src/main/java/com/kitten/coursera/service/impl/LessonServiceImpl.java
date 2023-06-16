@@ -1,8 +1,10 @@
 package com.kitten.coursera.service.impl;
 
+import com.kitten.coursera.components.ResponseJson;
 import com.kitten.coursera.dto.LessonDto;
 import com.kitten.coursera.entity.Course;
 import com.kitten.coursera.entity.Lesson;
+import com.kitten.coursera.exeption.ExBody;
 import com.kitten.coursera.repo.LessonRepo;
 import com.kitten.coursera.service.CourseService;
 import com.kitten.coursera.service.LessonService;
@@ -45,7 +47,6 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public List<Lesson> findAllBy(UUID courseId) {
         Course course = courseService.findBy(courseId);
-        log.info("course list:{}" + course.getLessons());
 
         return course.getLessons();
     }
@@ -62,7 +63,16 @@ public class LessonServiceImpl implements LessonService {
 
     @Transactional
     @Override
-    public void delete(UUID id) {
-        lessonRepo.deleteById(id);
+    public ResponseJson delete(UUID id) {
+        if (lessonRepo.findById(id).isEmpty()) {
+            return new ResponseJson(null, new ExBody("This lesson doesn't exist"));
+        }
+        try {
+            lessonRepo.deleteById(id);
+            return new ResponseJson("Lesson is deleting", null);
+        } catch (Exception e) {
+            return new ResponseJson(null, new ExBody(e.getMessage()));
+        }
+
     }
 }

@@ -1,11 +1,13 @@
 package com.kitten.coursera.service.impl;
 
+import com.kitten.coursera.components.ResponseJson;
 import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.dto.mapper.UserMapper;
 import com.kitten.coursera.entity.AppUser;
 import com.kitten.coursera.entity.Course;
 import com.kitten.coursera.entity.Role;
 import com.kitten.coursera.entity.UserToCourse;
+import com.kitten.coursera.exeption.ExBody;
 import com.kitten.coursera.repo.RoleRepo;
 import com.kitten.coursera.repo.UserRepo;
 import com.kitten.coursera.repo.UserToCourseRepo;
@@ -30,18 +32,19 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepo roleRepo;
+    private final UserToCourseRepo userToCourseRepo;
 
     @Override
     @Transactional
     public AppUser createUser(UserDto dto) {
         var newUser = userMapper.mapDtoToEntity(dto);
 
-        if (userRepo.findByeMail(newUser.getEMail()).isPresent()){
+        if (userRepo.findByeMail(newUser.getEMail()).isPresent()) {
             throw new IllegalStateException("User already exist");
         }
         try {
             newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("problem with encoding password");
         }
 
@@ -85,25 +88,33 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteBy(UUID id) {
-        userRepo.deleteById(id);
+    @Transactional
+    public ResponseJson deleteBy(UUID id) {
+        if (userRepo.findById(id).isEmpty()) {
+            return new ResponseJson(null, new ExBody("This user doesn't exist"));
+        }
+        try {
+            userToCourseRepo.deleteByUserId(id);
+            userRepo.deleteById(id);
+
+            return new ResponseJson("User is deleting", null);
+        } catch (Exception e) {
+            return new ResponseJson(null, new ExBody(e.getMessage()));
+        }
     }
 
     @Override
-    public String signUp(UUID userId, UUID courseId) {
-        String result;
-        if (userRepo.findAllAvailableUsers(courseId).contains(userId)){
+    public ResponseJson signUp(UUID userId, UUID courseId) {
+        if (userRepo.findAllAvailableUsers(courseId).contains(userId)) {
             try {
                 userRepo.signUp(userId, courseId);
-                result = "Success";
-            } catch (Exception e){
-                result = "We have problem with BD";
+                return new ResponseJson("Success", null);
+            } catch (Exception e) {
+                return new ResponseJson(null, new ExBody("We have problem with BD"));
             }
-        }else {
-            result = "You are already signed up!";
+        } else {
+            return new ResponseJson("You are already signed up!", null);
         }
-
-        return result;
     }
 
     @Override
@@ -112,44 +123,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String breakCourse(UUID userId, UUID courseId) {
-        String result;
+    public ResponseJson breakCourse(UUID userId, UUID courseId) {
         UserToCourse userToCourse = userCourseRepo.findByUserIdAndCourseId(userId, courseId);
-        if(userToCourse!=null){
+        if (userToCourse != null) {
             userCourseRepo.delete(userToCourse);
-            result = "You leave the course";
-        }else{
-            result="There is a problem, return later";
+            return new ResponseJson("You leave the course", null);
+        } else {
+            return new ResponseJson(null, new ExBody("There is a problem, return later"));
         }
-        return result;
     }
 
     @Override
     public AppUser findByEMail(String eMail) {
-        return userRepo.findByeMail(eMail).orElseThrow(()-> new RuntimeException("User not found"));
+        return userRepo.findByeMail(eMail).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @Override
-    public String addNewRole(UUID id, Role.RoleName roleName) {
-        String result;
+    public ResponseJson addNewRole(UUID id, Role.RoleName roleName) {
         AppUser user = this.getById(id);
         Role role = this.findRole(roleName);
         try {
             user.addRolesToUser(role);
             userRepo.save(user);
-        } catch (Exception e){
-            result = e.getMessage();
-            return result;
+            return new ResponseJson("Role is added", null);
+        } catch (Exception e) {
+            return new ResponseJson(null, new ExBody(e.getMessage()));
         }
-        result = "Role is added";
-        return result;
-
-
-
     }
 
-    private Role findRole (Role.RoleName roleName){
-       return roleRepo.findByRole(roleName)
-            .orElseThrow(()->new RuntimeException("Role doesn't exist"));
+    private Role findRole(Role.RoleName roleName) {
+        return roleRepo.findByRole(roleName)
+            .orElseThrow(() -> new RuntimeException("Role doesn't exist"));
     }
 }

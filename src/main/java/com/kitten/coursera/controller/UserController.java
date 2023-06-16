@@ -1,11 +1,11 @@
 package com.kitten.coursera.controller;
 
+import com.kitten.coursera.components.ResponseJson;
 import com.kitten.coursera.dto.CourseDto;
 import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.dto.mapper.CourseMapper;
 import com.kitten.coursera.dto.mapper.UserMapper;
 import com.kitten.coursera.entity.Role;
-import com.kitten.coursera.repo.UserRepo;
 import com.kitten.coursera.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,6 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final CourseMapper courseMapper;
-    private final UserRepo userRepo;
 
     @Secured({"ROLE_ADMIN", "ROLE_OWNER"})
     @GetMapping
@@ -43,7 +42,8 @@ public class UserController {
             .body(userMapper.mapUserToDto(userService.getById(id)));
     }
 
-    @PostMapping("/{id}/update")
+    //TODO:реализовать смену пароля
+    @PutMapping("/{id}/update")
     public ResponseEntity<UserDto> update(@PathVariable("id")UUID id,
                                           @RequestBody UserDto dto){
         return ResponseEntity
@@ -53,44 +53,49 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN", "ROLE_OWNER"})
     @PostMapping("/{id}/add_role")
-    public  ResponseEntity<String> addNewRole(@PathVariable("id")UUID id,
-                                              @RequestBody String roleString){
+    public  ResponseEntity<ResponseJson> addNewRole(@PathVariable("id")UUID id,
+                                                    @RequestBody String roleString){
         Role.RoleName role = Role.RoleName.valueOf(roleString);
-       String result = userService.addNewRole(id, role);
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(result);
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(userService.addNewRole(id, role));
     }
     @Secured({"ROLE_ADMIN", "ROLE_OWNER"})
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUsers(@PathVariable("id") UUID id) {
-        userService.deleteBy(id);
-        return ResponseEntity.ok("Юзер успешно удален");
-    }
-
     @GetMapping("/sign_up")
-    public ResponseEntity<String> signUpToCourse(@RequestParam("userId") UUID userId,
+    public ResponseEntity<ResponseJson> signUpToCourse(@RequestParam("userId") UUID userId,
                                                  @RequestParam("courseId") UUID courseId){
-      String result =  userService.signUp(userId, courseId);
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(result);
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(userService.signUp(userId, courseId));
     }
 
-    @GetMapping("/breakCourse")
-    public ResponseEntity<String> breakCourse(@RequestParam("userId") UUID userId,
+    @GetMapping("/break_course")
+    public ResponseEntity<ResponseJson> breakCourse(@RequestParam("userId") UUID userId,
                                               @RequestParam("courseId") UUID courseId){
-        String result = userService.breakCourse(userId, courseId);
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(result);
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(userService.breakCourse(userId, courseId));
+
     }
 
-    @GetMapping("/allCourses")
+    @GetMapping("/all_courses")
     public ResponseEntity<List<CourseDto>>readAllCourses(@RequestParam("userId") UUID id){
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(courseMapper.mapCoursesToDto(userService.findCourseByUserId(id)));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseJson> deleteUsers(@PathVariable("id") UUID id) {
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(userService.deleteBy(id));
+    }
+    //TODO:для методов досту админ/владелец либо юзер сам себя
 }
