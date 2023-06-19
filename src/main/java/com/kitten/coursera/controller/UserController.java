@@ -1,11 +1,14 @@
 package com.kitten.coursera.controller;
 
 import com.kitten.coursera.components.ResponseJson;
+import com.kitten.coursera.domain.entity.Role;
+import com.kitten.coursera.domain.entity.UserAvatar;
 import com.kitten.coursera.dto.CourseDto;
+import com.kitten.coursera.dto.UserAvatarDto;
 import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.dto.mapper.CourseMapper;
+import com.kitten.coursera.dto.mapper.UserAvatarMapper;
 import com.kitten.coursera.dto.mapper.UserMapper;
-import com.kitten.coursera.domain.entity.Role;
 import com.kitten.coursera.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,20 +31,21 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final CourseMapper courseMapper;
+    private final UserAvatarMapper userAvatarMapper;
 
     @Secured({"ROLE_ADMIN", "ROLE_OWNER"})
     @GetMapping
     public ResponseEntity<List<UserDto>> readAll(){
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(userMapper.mapUsersToDto(userService.findAll()));
+            .body(userMapper.toDto(userService.findAll()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> readBy(@PathVariable("id") UUID id){
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(userMapper.mapUserToDto(userService.getById(id)));
+            .body(userMapper.toDto(userService.getById(id)));
     }
 
     //TODO:реализовать смену пароля
@@ -49,7 +54,7 @@ public class UserController {
                                           @RequestBody UserDto dto){
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(userMapper.mapUserToDto(userService.updateUser(id, dto)));
+            .body(userMapper.toDto(userService.updateUser(id, dto)));
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_OWNER"})
@@ -87,7 +92,8 @@ public class UserController {
     public ResponseEntity<List<CourseDto>>readAllCourses(@RequestParam("userId") UUID id){
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(courseMapper.mapCoursesToDto(userService.findCourseByUserId(id)));
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(courseMapper.toDto(userService.findCourseByUserId(id)));
     }
 
     @DeleteMapping("/{id}")
@@ -99,4 +105,16 @@ public class UserController {
             .body(userService.deleteBy(id));
     }
     //TODO:для методов досту админ/владелец либо юзер сам себя
+
+
+    @PostMapping("/{id}/addAvatar")
+    public ResponseEntity<ResponseJson> addNewAvatar(@PathVariable("id") UUID userId,
+                                          @ModelAttribute @Validated UserAvatarDto avaDto){
+
+        UserAvatar avatar = userAvatarMapper.toEntity(avaDto);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(userService.uploadAvatar(userId, avatar));
+    }
 }

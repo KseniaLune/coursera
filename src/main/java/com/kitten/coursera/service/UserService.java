@@ -1,6 +1,7 @@
 package com.kitten.coursera.service;
 
 import com.kitten.coursera.components.ResponseJson;
+import com.kitten.coursera.domain.entity.UserAvatar;
 import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.domain.entity.AppUser;
 import com.kitten.coursera.domain.entity.Course;
@@ -30,4 +31,6 @@ public interface UserService {
     AppUser findByEMail(String eMail);
 
     ResponseJson addNewRole(UUID id, Role.RoleName role);
+
+    ResponseJson uploadAvatar(UUID userId, UserAvatar avatar);
 }

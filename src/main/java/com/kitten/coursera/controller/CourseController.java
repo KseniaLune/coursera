@@ -32,7 +32,7 @@ public class CourseController {
         var course = courseService.create(dto);
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(courseMapper.mapCourseToDto(course));
+            .body(courseMapper.toDto(course));
     }
 
     @GetMapping
@@ -41,7 +41,7 @@ public class CourseController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(courseMapper.mapCoursesToDto(courses));
+            .body(courseMapper.toDto(courses));
     }
 
     @GetMapping("/{id}")
@@ -50,7 +50,7 @@ public class CourseController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(courseMapper.mapCourseToDto(course));
+            .body(courseMapper.toDto(course));
     }
 
     @GetMapping("/filter")
@@ -58,7 +58,7 @@ public class CourseController {
         List<Course> courses = courseService.findByTitleWithPrefix(requireNonNullElse(titlePrefix, ""));
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(courseMapper.mapCoursesToDto(courses));
+            .body(courseMapper.toDto(courses));
     }
 
     @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
@@ -68,7 +68,7 @@ public class CourseController {
         Course course = courseService.updateCourse(id, dto);
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(courseMapper.mapCourseToDto(course));
+            .body(courseMapper.toDto(course));
     }
 
     @Secured({"ROLE_ADMIN","ROLE_OWNER"})

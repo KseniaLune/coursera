@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,5 +20,7 @@ public class UserDto {
     private String eMail;
     private Integer phone;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<String> avatar;
 
 }
