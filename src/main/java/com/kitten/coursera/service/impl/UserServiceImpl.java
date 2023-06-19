@@ -1,18 +1,16 @@
 package com.kitten.coursera.service.impl;
 
 import com.kitten.coursera.components.ResponseJson;
+import com.kitten.coursera.domain.entity.*;
+import com.kitten.coursera.domain.exception.AvatarUploadEx;
 import com.kitten.coursera.domain.exception.ResourceMappingEx;
 import com.kitten.coursera.domain.exception.ResourceNotFoundEx;
 import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.dto.mapper.UserMapper;
-import com.kitten.coursera.domain.entity.AppUser;
-import com.kitten.coursera.domain.entity.Course;
-import com.kitten.coursera.domain.entity.Role;
-import com.kitten.coursera.domain.entity.UserToCourse;
-import com.kitten.coursera.domain.exception.ExBody;
 import com.kitten.coursera.repo.RoleRepo;
 import com.kitten.coursera.repo.UserRepo;
 import com.kitten.coursera.repo.UserToCourseRepo;
+import com.kitten.coursera.service.UserAvatarService;
 import com.kitten.coursera.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +31,12 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepo roleRepo;
     private final UserToCourseRepo userToCourseRepo;
+    private final UserAvatarService userAvatarService;
 
     @Override
     @Transactional
     public AppUser createUser(UserDto dto) {
-        var newUser = userMapper.mapDtoToEntity(dto);
+        var newUser = userMapper.toEntity(dto);
 
         if (userRepo.findByeMail(newUser.getEMail()).isPresent()) {
             throw new IllegalStateException("User already exist");
@@ -148,6 +147,20 @@ public class UserServiceImpl implements UserService {
             return new ResponseJson("Role is added", null);
         } catch (Exception e) {
             return new ResponseJson(null, new RuntimeException(e.getMessage()));
+        }
+    }
+
+    @Override
+    @Transactional
+    public ResponseJson uploadAvatar(UUID userId, UserAvatar avatar) {
+        try {
+            AppUser user = this.getById(userId);
+            String filename = userAvatarService.addNewAvatar(avatar);
+            user.getAvatar().add(filename);
+            userRepo.save(user);
+            return new ResponseJson("Avatar was uploaded", null);
+        } catch (Exception e){
+            return new ResponseJson(null, new AvatarUploadEx("Avatar wasn't uploaded "+e.getMessage()));
         }
     }
 

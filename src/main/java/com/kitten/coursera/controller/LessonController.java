@@ -29,7 +29,7 @@ public class LessonController {
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(lessonMapper.mapLessonToDto(lessonService.create(dto)));
+            .body(lessonMapper.toDto(lessonService.create(dto)));
     }
 
     @GetMapping("/{id}")
@@ -37,7 +37,7 @@ public class LessonController {
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(lessonMapper.mapLessonToDto(lessonService.findBy(id)));
+            .body(lessonMapper.toDto(lessonService.findBy(id)));
     }
 
     @GetMapping()
@@ -45,7 +45,7 @@ public class LessonController {
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(lessonMapper.mapLessonsToDto(lessonService.findAllBy(courseId)));
+            .body(lessonMapper.toDto(lessonService.findAllBy(courseId)));
     }
     @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
     @PutMapping("/{id}")
@@ -53,7 +53,7 @@ public class LessonController {
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(lessonMapper.mapLessonToDto(lessonService.update(id, dto)));
+            .body(lessonMapper.toDto(lessonService.update(id, dto)));
     }
 
     @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})

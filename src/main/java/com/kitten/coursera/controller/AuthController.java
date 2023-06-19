@@ -30,7 +30,7 @@ public class AuthController {
         AppUser newUser = userService.createUser(userDto);
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(userMapper.mapUserToDto(newUser));
+            .body(userMapper.toDto(newUser));
     }
 
     @PostMapping("/refresh")

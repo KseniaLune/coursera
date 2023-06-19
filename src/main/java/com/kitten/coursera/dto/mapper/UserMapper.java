@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class UserMapper {
+public class UserMapper implements Mappable<AppUser, UserDto> {
 
-    public UserDto mapUserToDto(AppUser user) {
+    public UserDto toDto(AppUser user) {
     return UserDto.builder()
         .nickname(user.getNickname())
         .password(user.getPassword())
@@ -21,7 +21,7 @@ public class UserMapper {
         .build();
     }
 
-    public List<UserDto> mapUsersToDto(List<AppUser> users) {
+    public List<UserDto> toDto(List<AppUser> users) {
         return users.stream()
             .map(user -> UserDto.builder()
                 .nickname(user.getNickname())
@@ -33,7 +33,7 @@ public class UserMapper {
             .collect(Collectors.toList());
     }
 
-    public AppUser mapDtoToEntity(UserDto dto){
+    public AppUser toEntity(UserDto dto){
         if (dto==null){
             return null;
         }
@@ -46,5 +46,10 @@ public class UserMapper {
             .roles(new HashSet<>());
 
         return user.build();
+    }
+
+    @Override
+    public List<AppUser> toEntity(List<UserDto> dtos) {
+        return null;
     }
 }

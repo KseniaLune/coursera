@@ -26,6 +26,10 @@ public class AppUser {
     private String eMail;
     @Column(name = "c_phone")
     private Integer phone;
+    @Column(name = "c_avatar")
+    @CollectionTable(name = "t_users_avatars")
+    @ElementCollection
+    private List<String> avatar;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "t_user_role",
