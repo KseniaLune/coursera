@@ -2,7 +2,7 @@ package com.kitten.coursera.service.impl;
 
 import com.kitten.coursera.components.ResponseJson;
 import com.kitten.coursera.domain.entity.*;
-import com.kitten.coursera.domain.exception.AvatarUploadEx;
+import com.kitten.coursera.domain.exception.FileUploadEx;
 import com.kitten.coursera.domain.exception.ResourceMappingEx;
 import com.kitten.coursera.domain.exception.ResourceNotFoundEx;
 import com.kitten.coursera.dto.UserDto;
@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
             userRepo.save(user);
             return new ResponseJson("Avatar was uploaded", null);
         } catch (Exception e){
-            return new ResponseJson(null, new AvatarUploadEx("Avatar wasn't uploaded "+e.getMessage()));
+            return new ResponseJson(null, new FileUploadEx("Avatar wasn't uploaded "+e.getMessage()));
         }
     }
 

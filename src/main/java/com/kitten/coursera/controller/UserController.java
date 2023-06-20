@@ -107,7 +107,7 @@ public class UserController {
     //TODO:для методов досту админ/владелец либо юзер сам себя
 
 
-    @PostMapping("/{id}/addAvatar")
+    @PostMapping("/{id}/add_avatar")
     public ResponseEntity<ResponseJson> addNewAvatar(@PathVariable("id") UUID userId,
                                           @ModelAttribute @Validated UserAvatarDto avaDto){
 
