@@ -1,6 +1,8 @@
 package com.kitten.coursera.service.impl;
 
 import com.kitten.coursera.components.ResponseJson;
+import com.kitten.coursera.domain.entity.LessonFile;
+import com.kitten.coursera.domain.exception.FileUploadEx;
 import com.kitten.coursera.domain.exception.ResourceMappingEx;
 import com.kitten.coursera.domain.exception.ResourceNotFoundEx;
 import com.kitten.coursera.dto.LessonDto;
@@ -9,6 +11,7 @@ import com.kitten.coursera.domain.entity.Lesson;
 import com.kitten.coursera.domain.exception.ExBody;
 import com.kitten.coursera.repo.LessonRepo;
 import com.kitten.coursera.service.CourseService;
+import com.kitten.coursera.service.LessonFileService;
 import com.kitten.coursera.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +28,7 @@ public class LessonServiceImpl implements LessonService {
 
     private final CourseService courseService;
     private final LessonRepo lessonRepo;
+    private final LessonFileService lessonFileService;
 
     @Override
     @Transactional
@@ -84,5 +88,19 @@ public class LessonServiceImpl implements LessonService {
             return new ResponseJson(null, new Exception(e.getMessage()));
         }
 
+    }
+
+    @Transactional
+    @Override
+    public ResponseJson uploadFile(UUID lessonId, LessonFile lessonFile) {
+        try {
+            Lesson lesson = this.findBy(lessonId);
+            String filename = lessonFileService.addFile(lessonFile);
+            lesson.getFile().add(filename);
+            lessonRepo.save(lesson);
+            return new ResponseJson("File was uploaded.", null);
+        } catch (Exception e){
+            return new ResponseJson(null, new FileUploadEx("File wasn't uploaded: "+e.getMessage()));
+        }
     }
 }

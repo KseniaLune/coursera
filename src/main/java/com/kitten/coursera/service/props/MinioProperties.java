@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 @Data
 @ConfigurationProperties(prefix = "minio")
 public class MinioProperties {
-    private String bucket;
+    private String bucketAvatar;
+    private String bucketLessonFile;
     private String url;
     private String accessKey;
     private String secretKey;

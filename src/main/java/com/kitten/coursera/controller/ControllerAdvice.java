@@ -70,9 +70,9 @@ public class ControllerAdvice {
         return new ExBody("Authentication failed.");
     }
 
-    @ExceptionHandler(AvatarUploadEx.class)
+    @ExceptionHandler(FileUploadEx.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExBody handleAvatarUpload (AvatarUploadEx ex){
+    public ExBody handleAvatarUpload (FileUploadEx ex){
         return new ExBody(ex.getMessage());
     }
 

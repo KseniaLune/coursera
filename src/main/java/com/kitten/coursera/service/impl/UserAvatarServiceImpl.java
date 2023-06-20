@@ -1,7 +1,7 @@
 package com.kitten.coursera.service.impl;
 
 import com.kitten.coursera.domain.entity.UserAvatar;
-import com.kitten.coursera.domain.exception.AvatarUploadEx;
+import com.kitten.coursera.domain.exception.FileUploadEx;
 import com.kitten.coursera.service.UserAvatarService;
 import com.kitten.coursera.service.props.MinioProperties;
 import io.minio.BucketExistsArgs;
@@ -27,17 +27,15 @@ public class UserAvatarServiceImpl implements UserAvatarService {
 
     @Override
     public String addNewAvatar(UserAvatar ava) {
-        log.info("avatar: "+ava);
         try {
             createBucket();
         } catch (Exception e) {
-            throw new AvatarUploadEx("Avatar upload failed" + e.getMessage());
+            throw new FileUploadEx("Avatar upload failed" + e.getMessage());
         }
 
-        log.info("avatar, getFile" +ava.getFile());
         MultipartFile file = ava.getFile();
         if (file.isEmpty() || file.getOriginalFilename() == null) {
-            throw new AvatarUploadEx("Avatar must have name");
+            throw new FileUploadEx("Avatar must have name");
         }
 
         String fileName = generateFileName(file);
@@ -45,7 +43,7 @@ public class UserAvatarServiceImpl implements UserAvatarService {
         try {
             inputStream = file.getInputStream();
         } catch (Exception e) {
-            throw new AvatarUploadEx("Avatar upload failed" + e.getMessage());
+            throw new FileUploadEx("Avatar upload failed" + e.getMessage());
         }
         saveImage(inputStream, fileName);
         return fileName;
@@ -54,11 +52,11 @@ public class UserAvatarServiceImpl implements UserAvatarService {
     @SneakyThrows
     private void createBucket() {
         boolean found = minioClient.bucketExists(BucketExistsArgs.builder()
-            .bucket(minioProperties.getBucket())
+            .bucket(minioProperties.getBucketAvatar())
             .build());
         if (!found) {
             minioClient.makeBucket(MakeBucketArgs.builder()
-                .bucket(minioProperties.getBucket())
+                .bucket(minioProperties.getBucketAvatar())
                 .build());
         }
     }
@@ -78,7 +76,7 @@ public class UserAvatarServiceImpl implements UserAvatarService {
     private void saveImage(InputStream inputStream, String fileName) {
         minioClient.putObject(PutObjectArgs.builder()
             .stream(inputStream, inputStream.available(), -1)
-            .bucket(minioProperties.getBucket())
+            .bucket(minioProperties.getBucketAvatar())
             .object(fileName)
             .build());
     }
