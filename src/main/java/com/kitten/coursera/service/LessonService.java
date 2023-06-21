@@ -21,4 +21,8 @@ public interface LessonService {
     ResponseJson delete(UUID id);
 
     ResponseJson uploadFile(UUID lessonId, LessonFile lessonFile);
+
+    ResponseJson downloadFile(String fileName);
+
+    List<String> findAllFiles(UUID lessonId);
 }

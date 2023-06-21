@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public class LessonController {
     private final LessonMapper lessonMapper;
     private final LessonFileMapper lessonFileMapper;
 
-
+private final LessonFileService lessonFileService;
 
     @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
     @PostMapping("/create")
@@ -75,15 +74,23 @@ public class LessonController {
             .body(lessonService.uploadFile(lessonId, lessonFile));
 
     }
-//TODO:сделать загрузку файлов
-    @PostMapping("/{filename}/download_file")
-    public ResponseEntity <String> testDownload (@PathVariable("filename") String filename) throws Exception {
-//        lessonFileService.downloadFile(filename);
+    @PostMapping("/{file_name}/download_file")
+    public ResponseEntity<ResponseJson> downloadFile (@PathVariable("file_name") String fileName) throws Exception {
+
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body("test");
+            .body(lessonService.downloadFile(fileName));
 
     }
+
+//    @GetMapping("/{id}/files")
+//    public ResponseEntity<List<String>> allFiles(@PathVariable("id") UUID lessonId){
+//        lessonService.findAllFiles(lessonId);
+//        return ResponseEntity
+//            .status(HttpStatus.OK)
+//            .contentType(MediaType.APPLICATION_JSON)
+//            .body();
+//    }
 
 
 

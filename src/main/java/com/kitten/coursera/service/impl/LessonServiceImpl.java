@@ -103,4 +103,22 @@ public class LessonServiceImpl implements LessonService {
             return new ResponseJson(null, new FileUploadEx("File wasn't uploaded: "+e.getMessage()));
         }
     }
+
+    @Override
+    public ResponseJson downloadFile(String fileName) {
+        try {
+            lessonFileService.downloadFile(fileName);
+            return new ResponseJson("File was download.", null);
+        }catch (Exception e){
+            return new ResponseJson(null, new FileUploadEx("File wasn't download: "+e.getMessage()));
+        }
+
+    }
+
+    //TODO
+    @Override
+    public List<String> findAllFiles(UUID lessonId) {
+
+        return lessonFileService.findFilesBy(lessonId);
+    }
 }
