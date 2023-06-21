@@ -6,7 +6,6 @@ import com.kitten.coursera.dto.LessonDto;
 import com.kitten.coursera.dto.LessonFileDto;
 import com.kitten.coursera.dto.mapper.LessonFileMapper;
 import com.kitten.coursera.dto.mapper.LessonMapper;
-import com.kitten.coursera.service.LessonFileService;
 import com.kitten.coursera.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +26,6 @@ public class LessonController {
     private final LessonService lessonService;
     private final LessonMapper lessonMapper;
     private final LessonFileMapper lessonFileMapper;
-
-private final LessonFileService lessonFileService;
 
     @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
     @PostMapping("/create")
@@ -54,6 +51,7 @@ private final LessonFileService lessonFileService;
             .contentType(MediaType.APPLICATION_JSON)
             .body(lessonMapper.toDto(lessonService.findAllBy(courseId)));
     }
+
     @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
     @PutMapping("/{id}")
     public ResponseEntity<LessonDto> update(@PathVariable("id") UUID id, @RequestBody LessonDto dto) {
@@ -65,8 +63,8 @@ private final LessonFileService lessonFileService;
 
     @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
     @PostMapping("/{id}/add_file")
-    public ResponseEntity<ResponseJson> addFile (@PathVariable("id") UUID lessonId,
-                                                 @ModelAttribute LessonFileDto dto){
+    public ResponseEntity<ResponseJson> addFile(@PathVariable("id") UUID lessonId,
+                                                @ModelAttribute LessonFileDto dto) {
         LessonFile lessonFile = lessonFileMapper.toEntity(dto);
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -74,29 +72,37 @@ private final LessonFileService lessonFileService;
             .body(lessonService.uploadFile(lessonId, lessonFile));
 
     }
-    @PostMapping("/{file_name}/download_file")
-    public ResponseEntity<ResponseJson> downloadFile (@PathVariable("file_name") String fileName) throws Exception {
 
+    @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
+    @GetMapping("/{file_name}/download_file")
+    public ResponseEntity<ResponseJson> downloadFile(@PathVariable("file_name") String fileName) {
         return ResponseEntity
             .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(lessonService.downloadFile(fileName));
-
     }
 
-//    @GetMapping("/{id}/files")
-//    public ResponseEntity<List<String>> allFiles(@PathVariable("id") UUID lessonId){
-//        lessonService.findAllFiles(lessonId);
-//        return ResponseEntity
-//            .status(HttpStatus.OK)
-//            .contentType(MediaType.APPLICATION_JSON)
-//            .body();
-//    }
+    @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
+    @GetMapping("/{file_name}/show_file")
+    public ResponseEntity<ResponseJson> showFile(@PathVariable("file_name") String fileName) {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(lessonService.showFile(fileName));
+    }
 
+    @GetMapping("/{id}/files")
+    public ResponseEntity<List<String>> allFiles(@PathVariable("id") UUID lessonId){
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(lessonService.findAllFiles(lessonId));
+    }
 
 
     @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseJson> delete(@PathVariable("id") UUID id){
+    public ResponseEntity<ResponseJson> delete(@PathVariable("id") UUID id) {
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)

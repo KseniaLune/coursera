@@ -11,6 +11,4 @@ public interface LessonFileService {
     void downloadFile(String objectName);
 
     String showFile(String objectName);
-
-    List<String> findFilesBy(UUID lessonId);
 }
