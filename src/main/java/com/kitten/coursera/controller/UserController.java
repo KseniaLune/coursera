@@ -9,6 +9,7 @@ import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.dto.mapper.CourseMapper;
 import com.kitten.coursera.dto.mapper.UserAvatarMapper;
 import com.kitten.coursera.dto.mapper.UserMapper;
+import com.kitten.coursera.service.UserAvatarService;
 import com.kitten.coursera.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,8 @@ public class UserController {
     private final UserMapper userMapper;
     private final CourseMapper courseMapper;
     private final UserAvatarMapper userAvatarMapper;
+
+    private final UserAvatarService userAvatarService;
 
     @Secured({"ROLE_ADMIN", "ROLE_OWNER"})
     @GetMapping
@@ -116,5 +119,13 @@ public class UserController {
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(userService.uploadAvatar(userId, avatar));
+    }
+
+    @GetMapping("/{avatarId}/get")
+    public ResponseEntity<?> getAva (@PathVariable("avatarId") String avaName){
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(userAvatarService.showAvatar(avaName));
     }
 }
