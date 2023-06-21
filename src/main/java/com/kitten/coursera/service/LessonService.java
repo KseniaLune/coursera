@@ -24,5 +24,7 @@ public interface LessonService {
 
     ResponseJson downloadFile(String fileName);
 
+    ResponseJson showFile(String fileName);
+
     List<String> findAllFiles(UUID lessonId);
 }

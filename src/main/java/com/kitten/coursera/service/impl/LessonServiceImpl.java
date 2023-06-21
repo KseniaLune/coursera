@@ -2,13 +2,10 @@ package com.kitten.coursera.service.impl;
 
 import com.kitten.coursera.components.ResponseJson;
 import com.kitten.coursera.domain.entity.LessonFile;
-import com.kitten.coursera.domain.exception.FileUploadEx;
-import com.kitten.coursera.domain.exception.ResourceMappingEx;
-import com.kitten.coursera.domain.exception.ResourceNotFoundEx;
+import com.kitten.coursera.domain.exception.*;
 import com.kitten.coursera.dto.LessonDto;
 import com.kitten.coursera.domain.entity.Course;
 import com.kitten.coursera.domain.entity.Lesson;
-import com.kitten.coursera.domain.exception.ExBody;
 import com.kitten.coursera.repo.LessonRepo;
 import com.kitten.coursera.service.CourseService;
 import com.kitten.coursera.service.LessonFileService;
@@ -110,15 +107,25 @@ public class LessonServiceImpl implements LessonService {
             lessonFileService.downloadFile(fileName);
             return new ResponseJson("File was download.", null);
         }catch (Exception e){
-            return new ResponseJson(null, new FileUploadEx("File wasn't download: "+e.getMessage()));
+            return new ResponseJson(null, new FileDownloadEx("File wasn't download: "+e.getMessage()));
         }
 
     }
 
-    //TODO
+    @Override
+    public ResponseJson showFile(String fileName) {
+        try {
+            String url = lessonFileService.showFile(fileName);
+            return new ResponseJson(url, null);
+        }catch (Exception e){
+            return new ResponseJson(null, new FileDownloadEx("Internal Error "+e.getMessage()));
+        }
+    }
+
+
     @Override
     public List<String> findAllFiles(UUID lessonId) {
-
-        return lessonFileService.findFilesBy(lessonId);
+        Lesson lesson = this.findBy(lessonId);
+        return lesson.getFile();
     }
 }

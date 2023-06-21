@@ -33,4 +33,6 @@ public interface UserService {
     ResponseJson addNewRole(UUID id, Role.RoleName role);
 
     ResponseJson uploadAvatar(UUID userId, UserAvatar avatar);
+
+    ResponseJson showAvatar(UUID userId);
 }

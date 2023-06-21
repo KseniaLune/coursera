@@ -34,8 +34,6 @@ public class UserController {
     private final CourseMapper courseMapper;
     private final UserAvatarMapper userAvatarMapper;
 
-    private final UserAvatarService userAvatarService;
-
     @Secured({"ROLE_ADMIN", "ROLE_OWNER"})
     @GetMapping
     public ResponseEntity<List<UserDto>> readAll(){
@@ -121,11 +119,11 @@ public class UserController {
             .body(userService.uploadAvatar(userId, avatar));
     }
 
-    @GetMapping("/{avatarId}/get")
-    public ResponseEntity<?> getAva (@PathVariable("avatarId") String avaName){
+    @GetMapping("/{user_id}/get_avatar")
+    public ResponseEntity<ResponseJson> getAvatar (@PathVariable("user_id") UUID userId){
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(userAvatarService.showAvatar(avaName));
+            .body(userService.showAvatar(userId));
     }
 }

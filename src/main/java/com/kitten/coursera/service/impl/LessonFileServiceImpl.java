@@ -36,9 +36,4 @@ public class LessonFileServiceImpl implements LessonFileService {
         return minIO.showFile(objectName,minioProperties.getBucketLessonFile());
     }
 
-    @Override
-    public List<String> findFilesBy(UUID lessonId) {
-        return null;
-    }
-
 }

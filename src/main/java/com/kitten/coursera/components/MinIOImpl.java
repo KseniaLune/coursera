@@ -21,9 +21,9 @@ public class MinIOImpl implements MinIO {
     private final MinioClient minioClient;
 
     @Override
-    public String uploadFile(MultipartFile file, String basket) {
+    public String uploadFile(MultipartFile file, String bucket) {
         try {
-            createBucket(basket);
+            createBucket(bucket);
         } catch (Exception e) {
             throw new FileUploadEx("File upload exception " + e.getMessage());
         }
@@ -38,29 +38,29 @@ public class MinIOImpl implements MinIO {
         } catch (Exception e) {
             throw new FileUploadEx("File upload exception " + e.getMessage());
         }
-        saveFile(inputStream, filename, basket);
+        saveFile(inputStream, filename, bucket);
         return filename;
     }
 
     @Override
-    public void downloadFile(String objectName, String basket) {
+    public void downloadFile(String objectName, String bucket) {
         String extension = "." + this.getExtension(objectName);
         String originalName = this.getOriginalName(objectName);
         int count = 0;
-        this.download(basket, objectName, originalName, extension, count);
+        this.download(bucket, objectName, originalName, extension, count);
     }
 
-    private void download(String basket, String objectName, String originalName, String extension, int count) {
+    private void download(String bucket, String objectName, String originalName, String extension, int count) {
         try {
             if (count == 0) {
                 minioClient.downloadObject(DownloadObjectArgs.builder()
-                    .bucket(basket)
+                    .bucket(bucket)
                     .object(objectName)
                     .filename("/Users/andrew/Downloads/" + originalName + extension)
                     .build());
             } else {
                 minioClient.downloadObject(DownloadObjectArgs.builder()
-                    .bucket(basket)
+                    .bucket(bucket)
                     .object(objectName)
                     .filename("/Users/andrew/Downloads/" + originalName + "(" + count + ")" + extension)
                     .build());
@@ -68,7 +68,7 @@ public class MinIOImpl implements MinIO {
         } catch (Exception e) {
             count++;
             if (count <= 10) {
-                download(basket, objectName, originalName, extension, count);
+                download(bucket, objectName, originalName, extension, count);
             } else {
                 throw new FileDownloadEx("File download exception " + e.getMessage());
             }
@@ -76,7 +76,7 @@ public class MinIOImpl implements MinIO {
     }
 
     @Override
-    public String showFile(String objectName, String basket) {
+    public String showFile(String objectName, String bucket) {
         String extension = this.getExtension(objectName);
         Map<String, String> reqParams = new HashMap<>();
         switch (extension){
@@ -90,7 +90,7 @@ public class MinIOImpl implements MinIO {
         try {
             String presignedObjectUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                 .method(Method.GET)
-                .bucket(basket)
+                .bucket(bucket)
                 .object(objectName)
                 .expiry(7, TimeUnit.DAYS)
                 .extraQueryParams(reqParams)

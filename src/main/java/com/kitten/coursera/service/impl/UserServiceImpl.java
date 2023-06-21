@@ -2,6 +2,7 @@ package com.kitten.coursera.service.impl;
 
 import com.kitten.coursera.components.ResponseJson;
 import com.kitten.coursera.domain.entity.*;
+import com.kitten.coursera.domain.exception.FileDownloadEx;
 import com.kitten.coursera.domain.exception.FileUploadEx;
 import com.kitten.coursera.domain.exception.ResourceMappingEx;
 import com.kitten.coursera.domain.exception.ResourceNotFoundEx;
@@ -52,8 +53,6 @@ public class UserServiceImpl implements UserService {
         userRepo.save(newUser);
         newUser.addRolesToUser(roleUser);
 
-
-//        log.info("newUser: " + newUser.toString());
         return newUser;
     }
 
@@ -155,12 +154,25 @@ public class UserServiceImpl implements UserService {
     public ResponseJson uploadAvatar(UUID userId, UserAvatar avatar) {
         try {
             AppUser user = this.getById(userId);
+            //TODO если аватар есть => удалить предыдущий аватар
             String filename = userAvatarService.addNewAvatar(avatar);
             user.getAvatar().add(filename);
             userRepo.save(user);
             return new ResponseJson("Avatar was uploaded", null);
-        } catch (Exception e){
-            return new ResponseJson(null, new FileUploadEx("Avatar wasn't uploaded "+e.getMessage()));
+        } catch (Exception e) {
+            return new ResponseJson(null, new FileUploadEx("Avatar wasn't uploaded " + e.getMessage()));
+        }
+    }
+    @Override
+    @Transactional
+    public ResponseJson showAvatar(UUID userId){
+        try {
+            AppUser user = this.getById(userId);
+            String avatar = user.getAvatar().get(0);
+            String url = userAvatarService.showAvatar(avatar);
+            return new ResponseJson(url, null);
+        } catch (Exception e) {
+            return new ResponseJson(null, new FileDownloadEx("Avatar wasn't download " + e.getMessage()));
         }
     }
 
