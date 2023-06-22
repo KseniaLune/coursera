@@ -14,7 +14,7 @@ public interface LessonService {
 
     Lesson findBy(UUID id);
 
-    List<Lesson> findAllBy(UUID courseId);
+    List<String> findAllTitlesBy(UUID courseId);
 
     Lesson update(UUID id, LessonDto dto);
 

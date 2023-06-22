@@ -35,4 +35,6 @@ public interface UserService {
     ResponseJson uploadAvatar(UUID userId, UserAvatar avatar);
 
     ResponseJson showAvatar(UUID userId);
+
+    boolean isUserSigned(UUID userId, UUID lessonId);
 }

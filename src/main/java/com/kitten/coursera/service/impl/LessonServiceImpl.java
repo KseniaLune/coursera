@@ -1,11 +1,13 @@
 package com.kitten.coursera.service.impl;
 
 import com.kitten.coursera.components.ResponseJson;
-import com.kitten.coursera.domain.entity.LessonFile;
-import com.kitten.coursera.domain.exception.*;
-import com.kitten.coursera.dto.LessonDto;
-import com.kitten.coursera.domain.entity.Course;
 import com.kitten.coursera.domain.entity.Lesson;
+import com.kitten.coursera.domain.entity.LessonFile;
+import com.kitten.coursera.domain.exception.FileDownloadEx;
+import com.kitten.coursera.domain.exception.FileUploadEx;
+import com.kitten.coursera.domain.exception.ResourceMappingEx;
+import com.kitten.coursera.domain.exception.ResourceNotFoundEx;
+import com.kitten.coursera.dto.LessonDto;
 import com.kitten.coursera.repo.LessonRepo;
 import com.kitten.coursera.service.CourseService;
 import com.kitten.coursera.service.LessonFileService;
@@ -39,8 +41,8 @@ public class LessonServiceImpl implements LessonService {
         course.addLessonToCourse(lesson);
         try {
             lessonRepo.save(lesson);
-        } catch (Exception e){
-            throw  new ResourceMappingEx("Error while saving lesson in DB.");
+        } catch (Exception e) {
+            throw new ResourceMappingEx("Error while saving lesson in DB.");
         }
         return lesson;
     }
@@ -51,11 +53,12 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public List<Lesson> findAllBy(UUID courseId) {
+    public List<String> findAllTitlesBy(UUID courseId) {
         try {
-            return courseService.findBy(courseId).getLessons();
-        } catch (Exception e){
-            throw  new ResourceMappingEx("Error while finding course in DB.");
+            return courseService.findBy(courseId).getLessons().stream()
+                .map(Lesson::getTitle).toList();
+        } catch (Exception e) {
+            throw new ResourceMappingEx("Error while finding course in DB.");
         }
     }
 
@@ -66,8 +69,8 @@ public class LessonServiceImpl implements LessonService {
         lesson.setText(dto.getText());
         try {
             lesson.setCourse(courseService.findBy(dto.getCourseId()));
-        } catch (Exception e){
-            throw  new ResourceMappingEx("Error while finding course in DB.");
+        } catch (Exception e) {
+            throw new ResourceMappingEx("Error while finding course in DB.");
         }
         return lessonRepo.save(lesson);
     }
@@ -96,8 +99,8 @@ public class LessonServiceImpl implements LessonService {
             lesson.getFile().add(filename);
             lessonRepo.save(lesson);
             return new ResponseJson("File was uploaded.", null);
-        } catch (Exception e){
-            return new ResponseJson(null, new FileUploadEx("File wasn't uploaded: "+e.getMessage()));
+        } catch (Exception e) {
+            return new ResponseJson(null, new FileUploadEx("File wasn't uploaded: " + e.getMessage()));
         }
     }
 
@@ -106,8 +109,8 @@ public class LessonServiceImpl implements LessonService {
         try {
             lessonFileService.downloadFile(fileName);
             return new ResponseJson("File was download.", null);
-        }catch (Exception e){
-            return new ResponseJson(null, new FileDownloadEx("File wasn't download: "+e.getMessage()));
+        } catch (Exception e) {
+            return new ResponseJson(null, new FileDownloadEx("File wasn't download: " + e.getMessage()));
         }
 
     }
@@ -117,8 +120,8 @@ public class LessonServiceImpl implements LessonService {
         try {
             String url = lessonFileService.showFile(fileName);
             return new ResponseJson(url, null);
-        }catch (Exception e){
-            return new ResponseJson(null, new FileDownloadEx("Internal Error "+e.getMessage()));
+        } catch (Exception e) {
+            return new ResponseJson(null, new FileDownloadEx("Internal Error " + e.getMessage()));
         }
     }
 

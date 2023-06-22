@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class LessonController {
             .body(lessonMapper.toDto(lessonService.create(dto)));
     }
 
+    @PreAuthorize("@customSecurityExpression.canAccessLesson(#id)")
     @GetMapping("/{id}")
     public ResponseEntity<LessonDto> findLessonBy(@PathVariable("id") UUID id) {
         return ResponseEntity
@@ -45,11 +47,11 @@ public class LessonController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<LessonDto>> findAllLessonBy(@RequestParam("courseId") UUID courseId) {
+    public ResponseEntity<List<String>> findAllTitlesBy(@RequestParam("courseId") UUID courseId) {
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(lessonMapper.toDto(lessonService.findAllBy(courseId)));
+            .body(lessonService.findAllTitlesBy(courseId));
     }
 
     @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
@@ -73,26 +75,29 @@ public class LessonController {
 
     }
 
-    @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
+    @PreAuthorize("@customSecurityExpression.canAccessLesson(#lessonId)")
     @GetMapping("/{file_name}/download_file")
-    public ResponseEntity<ResponseJson> downloadFile(@PathVariable("file_name") String fileName) {
+    public ResponseEntity<ResponseJson> downloadFile(@PathVariable("file_name") String fileName,
+                                                     @RequestParam("lesson_id") UUID lessonId) {
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(lessonService.downloadFile(fileName));
     }
 
-    @Secured({"ROLE_PROFESSOR", "ROLE_ADMIN", "ROLE_OWNER"})
+    @PreAuthorize("@customSecurityExpression.canAccessLesson(#lessonId)")
     @GetMapping("/{file_name}/show_file")
-    public ResponseEntity<ResponseJson> showFile(@PathVariable("file_name") String fileName) {
+    public ResponseEntity<ResponseJson> showFile(@PathVariable("file_name") String fileName,
+                                                 @RequestParam("lesson_id") UUID lessonId) {
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(lessonService.showFile(fileName));
     }
 
+    @PreAuthorize("@customSecurityExpression.canAccessLesson(#lessonId)")
     @GetMapping("/{id}/files")
-    public ResponseEntity<List<String>> allFiles(@PathVariable("id") UUID lessonId){
+    public ResponseEntity<List<String>> allFiles(@PathVariable("id") UUID lessonId) {
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
