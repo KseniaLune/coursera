@@ -18,6 +18,7 @@ public class UserMapper implements Mappable<AppUser, UserDto> {
         .fullName(user.getFullName())
         .eMail(user.getEMail())
         .phone(user.getPhone())
+        .avatar(user.getAvatar())
         .build();
     }
 
@@ -29,6 +30,7 @@ public class UserMapper implements Mappable<AppUser, UserDto> {
                 .fullName(user.getFullName())
                 .eMail(user.getEMail())
                 .phone(user.getPhone())
+                .avatar(user.getAvatar())
                 .build())
             .collect(Collectors.toList());
     }

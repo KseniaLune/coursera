@@ -3,6 +3,7 @@ package com.kitten.coursera.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.*;
 
 @Entity
@@ -11,7 +12,7 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AppUser {
+public class AppUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "c_id")
@@ -26,10 +27,10 @@ public class AppUser {
     private String eMail;
     @Column(name = "c_phone")
     private Integer phone;
+//    @CollectionTable(name = "t_users_avatars")
+//    @ElementCollection
     @Column(name = "c_avatar")
-    @CollectionTable(name = "t_users_avatars")
-    @ElementCollection
-    private List<String> avatar;
+    private String avatar;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "t_user_role",

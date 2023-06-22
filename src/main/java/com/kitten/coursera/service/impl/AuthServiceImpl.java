@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -24,11 +25,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public JwtResponse login(JwtRequest request) {
 
-        log.info("jwt request: {}" + request.toString());
-
+        log.info("loginfo1");
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEMail(), request.getPassword()));
-
+log.info("loginfo2");
         AppUser user = userService.findByEMail(request.getEMail());
+        log.info("loginfo3");
         log.info("user: {}"+ user.toString());
 
         String accessToken = tokenProvider.createAccessToken(user.getId(), user.getEMail(), user.getRoles());

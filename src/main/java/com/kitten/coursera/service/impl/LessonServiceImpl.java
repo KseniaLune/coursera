@@ -14,6 +14,10 @@ import com.kitten.coursera.service.LessonFileService;
 import com.kitten.coursera.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +57,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    @Cacheable(value = "LessonService::findAllTitlesBy", key = "#courseId")
     public List<String> findAllTitlesBy(UUID courseId) {
         try {
             return courseService.findBy(courseId).getLessons().stream()
@@ -63,6 +68,10 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    @Caching(put = {
+        @CachePut(value = "LessonService::findAllTitlesBy", key = "#dto.courseId")
+
+    })
     public Lesson update(UUID id, LessonDto dto) {
         var lesson = this.findBy(id);
         lesson.setTitle(dto.getTitle());
@@ -92,6 +101,7 @@ public class LessonServiceImpl implements LessonService {
 
     @Transactional
     @Override
+    @CachePut(value = "LessonService::findAllFiles", key = "#lessonId")
     public ResponseJson uploadFile(UUID lessonId, LessonFile lessonFile) {
         try {
             Lesson lesson = this.findBy(lessonId);
@@ -126,6 +136,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
 
+    @Cacheable(value = "LessonService::findAllFiles", key = "#lessonId")
     @Override
     public List<String> findAllFiles(UUID lessonId) {
         Lesson lesson = this.findBy(lessonId);
