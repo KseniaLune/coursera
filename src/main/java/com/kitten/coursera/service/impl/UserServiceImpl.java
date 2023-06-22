@@ -11,6 +11,8 @@ import com.kitten.coursera.dto.mapper.UserMapper;
 import com.kitten.coursera.repo.RoleRepo;
 import com.kitten.coursera.repo.UserRepo;
 import com.kitten.coursera.repo.UserToCourseRepo;
+import com.kitten.coursera.service.CourseService;
+import com.kitten.coursera.service.LessonService;
 import com.kitten.coursera.service.UserAvatarService;
 import com.kitten.coursera.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    private final LessonService lessonService;
     private final UserRepo userRepo;
     private final UserToCourseRepo userCourseRepo;
     private final UserMapper userMapper;
@@ -116,6 +119,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public boolean isUserSigned(UUID userId, UUID lessonId) {
+        Course course = lessonService.findBy(lessonId).getCourse();
+        List<Course> usersCourse = this.findCourseByUserId(userId);
+        if (usersCourse.isEmpty()) {
+            return false;
+        } else {
+            return usersCourse.contains(course);
+        }
+    }
+
+    @Override
     public List<Course> findCourseByUserId(UUID userId) {
         return userRepo.findCourseByUserId(userId);
     }
@@ -163,9 +178,10 @@ public class UserServiceImpl implements UserService {
             return new ResponseJson(null, new FileUploadEx("Avatar wasn't uploaded " + e.getMessage()));
         }
     }
+
     @Override
     @Transactional
-    public ResponseJson showAvatar(UUID userId){
+    public ResponseJson showAvatar(UUID userId) {
         try {
             AppUser user = this.getById(userId);
             String avatar = user.getAvatar().get(0);
