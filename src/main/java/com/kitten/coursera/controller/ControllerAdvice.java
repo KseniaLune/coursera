@@ -1,9 +1,6 @@
 package com.kitten.coursera.controller;
 
-import com.kitten.coursera.domain.exception.AccessDeniedEx;
-import com.kitten.coursera.domain.exception.ExBody;
-import com.kitten.coursera.domain.exception.ResourceMappingEx;
-import com.kitten.coursera.domain.exception.ResourceNotFoundEx;
+import com.kitten.coursera.domain.exception.*;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -71,6 +68,12 @@ public class ControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExBody handleAuthenticationException (AuthenticationException ex){
         return new ExBody("Authentication failed.");
+    }
+
+    @ExceptionHandler(FileUploadEx.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExBody handleAvatarUpload (FileUploadEx ex){
+        return new ExBody(ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

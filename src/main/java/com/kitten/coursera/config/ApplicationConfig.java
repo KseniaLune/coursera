@@ -2,6 +2,8 @@ package com.kitten.coursera.config;
 
 import com.kitten.coursera.jwt.JwtTokenFilter;
 import com.kitten.coursera.jwt.TokenProvider;
+import com.kitten.coursera.service.props.MinioProperties;
+import io.minio.MinioClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +27,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class ApplicationConfig {
     private final ApplicationContext applicationContext;
     private final TokenProvider tokenProvider;
+    private final MinioProperties minioProperties;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -37,6 +41,16 @@ public class ApplicationConfig {
     }
 
     @Bean
+    public MinioClient minioClient() {
+        return MinioClient.builder()
+            .endpoint(minioProperties.getUrl())
+            .credentials(
+                minioProperties.getAccessKey(),
+                minioProperties.getSecretKey())
+            .build();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
 
@@ -45,7 +59,7 @@ public class ApplicationConfig {
             .cors(cors -> {
             })
             .httpBasic(AbstractHttpConfigurer::disable)
-            .sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling((eh) -> eh.authenticationEntryPoint((request, response, authException) -> {
                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
                         response.getWriter().write("You must be authorized!");
@@ -62,7 +76,7 @@ public class ApplicationConfig {
                         "/course",
                         "/course/filter",
                         "/auth/**"
-                        ).permitAll()
+                    ).permitAll()
                     .anyRequest().authenticated()
             )
             .addFilterBefore(new JwtTokenFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);

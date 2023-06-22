@@ -10,9 +10,10 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
-public class CourseMapper {
+public class CourseMapper implements Mappable <Course, CourseDto> {
 
-    public CourseDto mapCourseToDto(Course c) {
+    @Override
+    public CourseDto toDto(Course c) {
         return CourseDto.builder()
             .title(c.getTitle())
             .description(c.getDescription())
@@ -20,7 +21,8 @@ public class CourseMapper {
             .build();
     }
 
-    public List<CourseDto> mapCoursesToDto(List<Course> courses) {
+    @Override
+    public List<CourseDto> toDto(List<Course> courses) {
         return courses.stream()
             .map(c -> CourseDto.builder()
                 .title(c.getTitle())
@@ -28,5 +30,17 @@ public class CourseMapper {
                 .author(c.getAuthor())
                 .build())
             .collect(Collectors.toList());
+    }
+
+
+
+    @Override
+    public Course toEntity(CourseDto dto) {
+        return null;
+    }
+
+    @Override
+    public List<Course> toEntity(List<CourseDto> dtos) {
+        return null;
     }
 }

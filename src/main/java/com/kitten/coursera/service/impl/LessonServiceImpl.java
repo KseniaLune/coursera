@@ -1,14 +1,16 @@
 package com.kitten.coursera.service.impl;
 
 import com.kitten.coursera.components.ResponseJson;
+import com.kitten.coursera.domain.entity.Lesson;
+import com.kitten.coursera.domain.entity.LessonFile;
+import com.kitten.coursera.domain.exception.FileDownloadEx;
+import com.kitten.coursera.domain.exception.FileUploadEx;
 import com.kitten.coursera.domain.exception.ResourceMappingEx;
 import com.kitten.coursera.domain.exception.ResourceNotFoundEx;
 import com.kitten.coursera.dto.LessonDto;
-import com.kitten.coursera.domain.entity.Course;
-import com.kitten.coursera.domain.entity.Lesson;
-import com.kitten.coursera.domain.exception.ExBody;
 import com.kitten.coursera.repo.LessonRepo;
 import com.kitten.coursera.service.CourseService;
+import com.kitten.coursera.service.LessonFileService;
 import com.kitten.coursera.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ public class LessonServiceImpl implements LessonService {
 
     private final CourseService courseService;
     private final LessonRepo lessonRepo;
+    private final LessonFileService lessonFileService;
 
     @Override
     @Transactional
@@ -38,8 +41,8 @@ public class LessonServiceImpl implements LessonService {
         course.addLessonToCourse(lesson);
         try {
             lessonRepo.save(lesson);
-        } catch (Exception e){
-            throw  new ResourceMappingEx("Error while saving lesson in DB.");
+        } catch (Exception e) {
+            throw new ResourceMappingEx("Error while saving lesson in DB.");
         }
         return lesson;
     }
@@ -50,11 +53,12 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public List<Lesson> findAllBy(UUID courseId) {
+    public List<String> findAllTitlesBy(UUID courseId) {
         try {
-            return courseService.findBy(courseId).getLessons();
-        } catch (Exception e){
-            throw  new ResourceMappingEx("Error while finding course in DB.");
+            return courseService.findBy(courseId).getLessons().stream()
+                .map(Lesson::getTitle).toList();
+        } catch (Exception e) {
+            throw new ResourceMappingEx("Error while finding course in DB.");
         }
     }
 
@@ -65,8 +69,8 @@ public class LessonServiceImpl implements LessonService {
         lesson.setText(dto.getText());
         try {
             lesson.setCourse(courseService.findBy(dto.getCourseId()));
-        } catch (Exception e){
-            throw  new ResourceMappingEx("Error while finding course in DB.");
+        } catch (Exception e) {
+            throw new ResourceMappingEx("Error while finding course in DB.");
         }
         return lessonRepo.save(lesson);
     }
@@ -84,5 +88,47 @@ public class LessonServiceImpl implements LessonService {
             return new ResponseJson(null, new Exception(e.getMessage()));
         }
 
+    }
+
+    @Transactional
+    @Override
+    public ResponseJson uploadFile(UUID lessonId, LessonFile lessonFile) {
+        try {
+            Lesson lesson = this.findBy(lessonId);
+            String filename = lessonFileService.addFile(lessonFile);
+            lesson.getFile().add(filename);
+            lessonRepo.save(lesson);
+            return new ResponseJson("File was uploaded.", null);
+        } catch (Exception e) {
+            return new ResponseJson(null, new FileUploadEx("File wasn't uploaded: " + e.getMessage()));
+        }
+    }
+
+    @Override
+    public ResponseJson downloadFile(String fileName) {
+        try {
+            lessonFileService.downloadFile(fileName);
+            return new ResponseJson("File was download.", null);
+        } catch (Exception e) {
+            return new ResponseJson(null, new FileDownloadEx("File wasn't download: " + e.getMessage()));
+        }
+
+    }
+
+    @Override
+    public ResponseJson showFile(String fileName) {
+        try {
+            String url = lessonFileService.showFile(fileName);
+            return new ResponseJson(url, null);
+        } catch (Exception e) {
+            return new ResponseJson(null, new FileDownloadEx("Internal Error " + e.getMessage()));
+        }
+    }
+
+
+    @Override
+    public List<String> findAllFiles(UUID lessonId) {
+        Lesson lesson = this.findBy(lessonId);
+        return lesson.getFile();
     }
 }

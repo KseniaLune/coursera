@@ -1,6 +1,7 @@
 package com.kitten.coursera.service;
 
 import com.kitten.coursera.components.ResponseJson;
+import com.kitten.coursera.domain.entity.LessonFile;
 import com.kitten.coursera.dto.LessonDto;
 import com.kitten.coursera.domain.entity.Lesson;
 
@@ -13,9 +14,17 @@ public interface LessonService {
 
     Lesson findBy(UUID id);
 
-    List<Lesson> findAllBy(UUID courseId);
+    List<String> findAllTitlesBy(UUID courseId);
 
     Lesson update(UUID id, LessonDto dto);
 
     ResponseJson delete(UUID id);
+
+    ResponseJson uploadFile(UUID lessonId, LessonFile lessonFile);
+
+    ResponseJson downloadFile(String fileName);
+
+    ResponseJson showFile(String fileName);
+
+    List<String> findAllFiles(UUID lessonId);
 }

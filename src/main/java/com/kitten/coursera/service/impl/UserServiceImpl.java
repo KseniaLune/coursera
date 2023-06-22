@@ -1,18 +1,19 @@
 package com.kitten.coursera.service.impl;
 
 import com.kitten.coursera.components.ResponseJson;
+import com.kitten.coursera.domain.entity.*;
+import com.kitten.coursera.domain.exception.FileDownloadEx;
+import com.kitten.coursera.domain.exception.FileUploadEx;
 import com.kitten.coursera.domain.exception.ResourceMappingEx;
 import com.kitten.coursera.domain.exception.ResourceNotFoundEx;
 import com.kitten.coursera.dto.UserDto;
 import com.kitten.coursera.dto.mapper.UserMapper;
-import com.kitten.coursera.domain.entity.AppUser;
-import com.kitten.coursera.domain.entity.Course;
-import com.kitten.coursera.domain.entity.Role;
-import com.kitten.coursera.domain.entity.UserToCourse;
-import com.kitten.coursera.domain.exception.ExBody;
 import com.kitten.coursera.repo.RoleRepo;
 import com.kitten.coursera.repo.UserRepo;
 import com.kitten.coursera.repo.UserToCourseRepo;
+import com.kitten.coursera.service.CourseService;
+import com.kitten.coursera.service.LessonService;
+import com.kitten.coursera.service.UserAvatarService;
 import com.kitten.coursera.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,17 +28,19 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    private final LessonService lessonService;
     private final UserRepo userRepo;
     private final UserToCourseRepo userCourseRepo;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepo roleRepo;
     private final UserToCourseRepo userToCourseRepo;
+    private final UserAvatarService userAvatarService;
 
     @Override
     @Transactional
     public AppUser createUser(UserDto dto) {
-        var newUser = userMapper.mapDtoToEntity(dto);
+        var newUser = userMapper.toEntity(dto);
 
         if (userRepo.findByeMail(newUser.getEMail()).isPresent()) {
             throw new IllegalStateException("User already exist");
@@ -53,8 +56,6 @@ public class UserServiceImpl implements UserService {
         userRepo.save(newUser);
         newUser.addRolesToUser(roleUser);
 
-
-//        log.info("newUser: " + newUser.toString());
         return newUser;
     }
 
@@ -118,6 +119,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public boolean isUserSigned(UUID userId, UUID lessonId) {
+        Course course = lessonService.findBy(lessonId).getCourse();
+        List<Course> usersCourse = this.findCourseByUserId(userId);
+        if (usersCourse.isEmpty()) {
+            return false;
+        } else {
+            return usersCourse.contains(course);
+        }
+    }
+
+    @Override
     public List<Course> findCourseByUserId(UUID userId) {
         return userRepo.findCourseByUserId(userId);
     }
@@ -148,6 +161,34 @@ public class UserServiceImpl implements UserService {
             return new ResponseJson("Role is added", null);
         } catch (Exception e) {
             return new ResponseJson(null, new RuntimeException(e.getMessage()));
+        }
+    }
+
+    @Override
+    @Transactional
+    public ResponseJson uploadAvatar(UUID userId, UserAvatar avatar) {
+        try {
+            AppUser user = this.getById(userId);
+            //TODO если аватар есть => удалить предыдущий аватар
+            String filename = userAvatarService.addNewAvatar(avatar);
+            user.getAvatar().add(filename);
+            userRepo.save(user);
+            return new ResponseJson("Avatar was uploaded", null);
+        } catch (Exception e) {
+            return new ResponseJson(null, new FileUploadEx("Avatar wasn't uploaded " + e.getMessage()));
+        }
+    }
+
+    @Override
+    @Transactional
+    public ResponseJson showAvatar(UUID userId) {
+        try {
+            AppUser user = this.getById(userId);
+            String avatar = user.getAvatar().get(0);
+            String url = userAvatarService.showAvatar(avatar);
+            return new ResponseJson(url, null);
+        } catch (Exception e) {
+            return new ResponseJson(null, new FileDownloadEx("Avatar wasn't download " + e.getMessage()));
         }
     }
 
