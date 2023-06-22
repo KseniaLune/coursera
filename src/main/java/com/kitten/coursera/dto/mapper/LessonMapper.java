@@ -15,6 +15,7 @@ public class LessonMapper implements Mappable<Lesson, LessonDto> {
             .title(lesson.getTitle())
             .text(lesson.getText())
             .courseId(lesson.getCourse().getId())
+            .files(lesson.getFile())
             .build();
     }
 
@@ -24,6 +25,7 @@ public class LessonMapper implements Mappable<Lesson, LessonDto> {
                 .title(lesson.getTitle())
                 .text(lesson.getText())
                 .courseId(lesson.getCourse().getId())
+                .files(lesson.getFile())
                 .build())
             .collect(Collectors.toList());
     }

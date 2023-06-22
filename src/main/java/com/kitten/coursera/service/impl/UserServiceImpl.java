@@ -17,6 +17,10 @@ import com.kitten.coursera.service.UserAvatarService;
 import com.kitten.coursera.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,19 +32,21 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final LessonService lessonService;
     private final UserRepo userRepo;
-    private final UserToCourseRepo userCourseRepo;
-    private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
     private final RoleRepo roleRepo;
-    private final UserToCourseRepo userToCourseRepo;
+    private final PasswordEncoder passwordEncoder;
+
+    private final UserToCourseRepo userCourseRepo;
+    private final LessonService lessonService;
     private final UserAvatarService userAvatarService;
+
+    private final UserMapper userMapper;
 
     @Override
     @Transactional
     public AppUser createUser(UserDto dto) {
         var newUser = userMapper.toEntity(dto);
+
 
         if (userRepo.findByeMail(newUser.getEMail()).isPresent()) {
             throw new IllegalStateException("User already exist");
@@ -60,8 +66,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    @Cacheable(value = "UserService::getById", key = "#id")
     public AppUser getById(UUID id) {
         return userRepo.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Override
+    @Transactional
+    public AppUser findByEMail(String eMail) {
+        return userRepo.findByeMail(eMail).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @Override
@@ -71,6 +85,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @CachePut(value = "UserService::getById", key = "#id")
     public AppUser updateUser(UUID id, UserDto dto) {
         AppUser user = userRepo.findById(id).orElseThrow(() -> new RuntimeException("user not found"));
         if (dto.getNickname() != null) {
@@ -90,12 +105,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "UserService::getById", key = "#id")
     public ResponseJson deleteBy(UUID id) {
         if (userRepo.findById(id).isEmpty()) {
             return new ResponseJson(null, new ResourceNotFoundEx("This user doesn't exist"));
         }
         try {
-            userToCourseRepo.deleteByUserId(id);
+            userCourseRepo.deleteByUserId(id);
             userRepo.deleteById(id);
 
             return new ResponseJson("User is deleting", null);
@@ -105,6 +121,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "UserService::signUp", key = "#userId+'.'+#courseId")
     public ResponseJson signUp(UUID userId, UUID courseId) {
         if (userRepo.findAllAvailableUsers(courseId).contains(userId)) {
             try {
@@ -131,11 +148,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "UserService::findCourseByUserId", key = "#userId")
     public List<Course> findCourseByUserId(UUID userId) {
         return userRepo.findCourseByUserId(userId);
     }
 
     @Override
+    @CacheEvict(value = "UserService::signUp", key = "#userId+'.'+#courseId")
     public ResponseJson breakCourse(UUID userId, UUID courseId) {
         UserToCourse userToCourse = userCourseRepo.findByUserIdAndCourseId(userId, courseId);
         if (userToCourse != null) {
@@ -144,11 +163,6 @@ public class UserServiceImpl implements UserService {
         } else {
             return new ResponseJson(null, new ResourceMappingEx("Error while deleting data in DB."));
         }
-    }
-
-    @Override
-    public AppUser findByEMail(String eMail) {
-        return userRepo.findByeMail(eMail).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @Override
@@ -169,9 +183,9 @@ public class UserServiceImpl implements UserService {
     public ResponseJson uploadAvatar(UUID userId, UserAvatar avatar) {
         try {
             AppUser user = this.getById(userId);
-            //TODO если аватар есть => удалить предыдущий аватар
             String filename = userAvatarService.addNewAvatar(avatar);
-            user.getAvatar().add(filename);
+            log.info("filename = "+filename);
+            user.setAvatar(filename);
             userRepo.save(user);
             return new ResponseJson("Avatar was uploaded", null);
         } catch (Exception e) {
@@ -184,7 +198,7 @@ public class UserServiceImpl implements UserService {
     public ResponseJson showAvatar(UUID userId) {
         try {
             AppUser user = this.getById(userId);
-            String avatar = user.getAvatar().get(0);
+            String avatar = user.getAvatar();
             String url = userAvatarService.showAvatar(avatar);
             return new ResponseJson(url, null);
         } catch (Exception e) {

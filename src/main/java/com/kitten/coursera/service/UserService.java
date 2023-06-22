@@ -16,6 +16,8 @@ public interface UserService {
 
     AppUser getById(UUID id);
 
+    AppUser findByEMail(String eMail);
+
     List<AppUser> findAll();
 
     AppUser updateUser(UUID id,UserDto dto);
@@ -27,8 +29,6 @@ public interface UserService {
     List<Course> findCourseByUserId(UUID userId);
 
     ResponseJson breakCourse(UUID userId, UUID courseId);
-
-    AppUser findByEMail(String eMail);
 
     ResponseJson addNewRole(UUID id, Role.RoleName role);
 

@@ -9,6 +9,9 @@ import com.kitten.coursera.repo.UserToCourseRepo;
 import com.kitten.coursera.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.ResourceAccessException;
@@ -50,6 +53,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Cacheable(value = "CourseService::findBy", key = "#id")
     public Course findBy(UUID id) {
         return courseRepo.findById(id).orElseThrow(()-> new ResourceNotFoundEx("Course not found"));
     }
@@ -61,6 +65,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @CachePut(value = "CourseService::findBy", key = "#id")
     public Course updateCourse(UUID id, CourseDto dto) {
 
         var course = this.findBy(id);
@@ -76,6 +81,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @CachePut(value = "CourseService::findBy", key = "#course.id")
     public Course update(Course course) {
         try {
             return courseRepo.save(course);
@@ -86,6 +92,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
+    @CacheEvict(value ="CourseService::findBy", key = "#id")
     public void deleteBy(UUID id) {
 
         try {
