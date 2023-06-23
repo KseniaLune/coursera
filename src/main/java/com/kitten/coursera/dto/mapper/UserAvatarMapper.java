@@ -21,16 +21,10 @@ public class UserAvatarMapper implements Mappable <UserAvatar, UserAvatarDto>{
         return null;
     }
 
-    @Override
     public UserAvatar toEntity(UserAvatarDto dto) {
         UserAvatar userAvatar = UserAvatar.builder()
             .file(dto.getFile())
             .build();
         return userAvatar;
-    }
-
-    @Override
-    public List<UserAvatar> toEntity(List<UserAvatarDto> dtos) {
-        return null;
     }
 }

@@ -25,12 +25,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public JwtResponse login(JwtRequest request) {
 
-        log.info("loginfo1");
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEMail(), request.getPassword()));
-log.info("loginfo2");
         AppUser user = userService.findByEMail(request.getEMail());
-        log.info("loginfo3");
-        log.info("user: {}"+ user.toString());
 
         String accessToken = tokenProvider.createAccessToken(user.getId(), user.getEMail(), user.getRoles());
         String refreshToken = tokenProvider.createRefreshToken(user.getId(), user.getEMail());

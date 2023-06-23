@@ -31,16 +31,4 @@ public class CourseMapper implements Mappable <Course, CourseDto> {
                 .build())
             .collect(Collectors.toList());
     }
-
-
-
-    @Override
-    public Course toEntity(CourseDto dto) {
-        return null;
-    }
-
-    @Override
-    public List<Course> toEntity(List<CourseDto> dtos) {
-        return null;
-    }
 }

@@ -25,7 +25,6 @@ public class LessonFileMapper implements Mappable<LessonFile, LessonFileDto>{
             .collect(Collectors.toList());
     }
 
-    @Override
     public LessonFile toEntity(LessonFileDto dto) {
         LessonFile lessonFile = LessonFile.builder()
             .file(dto.getFile())
@@ -33,7 +32,6 @@ public class LessonFileMapper implements Mappable<LessonFile, LessonFileDto>{
         return lessonFile;
     }
 
-    @Override
     public List<LessonFile> toEntity(List<LessonFileDto> dtos) {
         return dtos.stream()
             .map(d -> LessonFile.builder()

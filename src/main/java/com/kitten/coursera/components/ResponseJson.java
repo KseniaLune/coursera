@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class ResponseJson {
     private String result;
     private Exception e;
