@@ -25,7 +25,6 @@ public class LessonFileServiceImpl implements LessonFileService {
         return minIO.uploadFile(lessonFile.getFile(), minioProperties.getBucketLessonFile());
     }
 
-
     @Override
     public void downloadFile(String objectName) {
         minIO.downloadFile(objectName, minioProperties.getBucketLessonFile());

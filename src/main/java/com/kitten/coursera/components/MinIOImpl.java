@@ -20,6 +20,8 @@ import java.util.concurrent.TimeUnit;
 public class MinIOImpl implements MinIO {
     private final MinioClient minioClient;
 
+    private final int UUID_SYMBOLS = 36;
+
     @Override
     public String uploadFile(MultipartFile file, String bucket) {
         try {
@@ -132,7 +134,7 @@ public class MinIOImpl implements MinIO {
 
     private String getOriginalName(String objectName) {
         String withoutExtension = objectName.substring(0, objectName.lastIndexOf(".") + 1);
-        int indexUUID = (withoutExtension.length() - 1) - 36 - 1;
+        int indexUUID = (withoutExtension.length() - 1) - UUID_SYMBOLS - 1;
         String name = withoutExtension.substring(0, indexUUID);
         return name;
     }
