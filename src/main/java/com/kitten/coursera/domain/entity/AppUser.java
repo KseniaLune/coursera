@@ -27,8 +27,6 @@ public class AppUser implements Serializable {
     private String eMail;
     @Column(name = "c_phone")
     private Integer phone;
-//    @CollectionTable(name = "t_users_avatars")
-//    @ElementCollection
     @Column(name = "c_avatar")
     private String avatar;
 

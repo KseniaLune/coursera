@@ -22,6 +22,7 @@ public class MinIOImpl implements MinIO {
 
     private final int UUID_SYMBOLS = 36;
 
+
     @Override
     public String uploadFile(MultipartFile file, String bucket) {
         try {
