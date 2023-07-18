@@ -2,10 +2,12 @@ package com.kitten.coursera.components;
 
 import com.kitten.coursera.domain.exception.FileDownloadEx;
 import com.kitten.coursera.domain.exception.FileUploadEx;
+import com.kitten.coursera.service.props.MinioProperties;
 import io.minio.*;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,8 +21,10 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class MinIOImpl implements MinIO {
     private final MinioClient minioClient;
+    private final MinioProperties minioProperties;
 
     private final int UUID_SYMBOLS = 36;
+
 
 
     @Override
@@ -59,13 +63,13 @@ public class MinIOImpl implements MinIO {
                 minioClient.downloadObject(DownloadObjectArgs.builder()
                     .bucket(bucket)
                     .object(objectName)
-                    .filename("/Users/andrew/Downloads/" + originalName + extension)
+                    .filename(minioProperties.getPath() + originalName + extension)
                     .build());
             } else {
                 minioClient.downloadObject(DownloadObjectArgs.builder()
                     .bucket(bucket)
                     .object(objectName)
-                    .filename("/Users/andrew/Downloads/" + originalName + "(" + count + ")" + extension)
+                    .filename(minioProperties.getPath() + originalName + "(" + count + ")" + extension)
                     .build());
             }
         } catch (Exception e) {

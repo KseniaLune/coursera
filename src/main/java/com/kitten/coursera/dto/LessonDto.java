@@ -20,7 +20,4 @@ public class LessonDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<String> files;
 
-    public LessonDto(UUID courseId){
-        this.courseId = courseId;
-    }
 }

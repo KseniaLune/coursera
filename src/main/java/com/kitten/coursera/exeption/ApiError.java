@@ -6,10 +6,10 @@ import java.util.NoSuchElementException;
 
 @Data
 public class ApiError {
-   private String message;
+    private String message;
 
-    public ApiError (NoSuchElementException e) {
-        this.message = "No message found" ;
+    public ApiError(NoSuchElementException e) {
+        this.message = "No message found";
     }
 
 
