@@ -16,7 +16,6 @@ import java.io.IOException;
 public class JwtTokenFilter extends GenericFilterBean {
     private final TokenProvider tokenProvider;
 
-
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         String bearerToken = ((HttpServletRequest) request).getHeader("Authorization");
@@ -33,6 +32,4 @@ public class JwtTokenFilter extends GenericFilterBean {
         }
         chain.doFilter(request, response);
     }
-
-
 }

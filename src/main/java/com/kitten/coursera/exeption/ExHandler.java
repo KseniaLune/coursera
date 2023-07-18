@@ -21,6 +21,7 @@ public class ExHandler {
             .status(HttpStatus.BAD_REQUEST)
             .body(new ApiError(ex));
     }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity methodArgumentNotValidException(MethodArgumentNotValidException ex) {
         List<FieldValidationErrorDto> errors = ex.getFieldErrors().stream()
@@ -30,8 +31,9 @@ public class ExHandler {
             .status(HttpStatus.BAD_REQUEST)
             .body(new RequestFieldValidationErrorDto(errors));
     }
+
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity IllegalState(IllegalStateException ex){
+    public ResponseEntity IllegalState(IllegalStateException ex) {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(new ExBody(ex.getMessage()));
@@ -39,7 +41,7 @@ public class ExHandler {
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExBody handleRuntime(RuntimeException ex){
+    public ExBody handleRuntime(RuntimeException ex) {
         return new ExBody(ex.getMessage());
     }
 }
