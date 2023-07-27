@@ -1,0 +1,31 @@
+[versions]
+jwt = "0.11.5"
+minio = "8.5.3"
+slf4j = "2.0.7"
+gavlyukovskiy = "1.9.0"
+
+[libraries]
+jwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref="jwt" }
+jwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref="jwt" }
+jwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref="jwt" }
+minio-impl = { module = "io.minio:minio", version.ref="minio"}
+lombok = { module = "org.projectlombok:lombok"}
+flyway-core = { module = "org.flywaydb:flyway-core"}
+postgresql = { module = "org.postgresql:postgresql"}
+slf4j = { module = "org.slf4j:slf4j-api", version.ref="slf4j"}
+
+spring-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+spring-starter-security = { module = "org.springframework.boot:spring-boot-starter-validation" }
+spring-starter-web = { module = "org.springframework.boot:spring-boot-starter-validation" }
+
+spring-starter-data-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc" }
+spring-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+spring-starter-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
+
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test"}
+spring-security-test = { module = "org.springframework.security:spring-security-test"}
+
+datasource-proxy-spring-boot-starter = { module = "com.github.gavlyukovskiy:datasource-proxy-spring-boot-starter", version.ref="gavlyukovskiy"}
+
+[bundles]
+jwt = [ "jwt-jackson", "jwt-impl" ]
