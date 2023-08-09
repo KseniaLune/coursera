@@ -20,11 +20,11 @@ public class Course implements Serializable {
     @Column(name = "c_id")
     private UUID id;
     @Column(name = "c_title")
-    public String title;
+    private String title;
     @Column(name = "c_description")
-    public String description;
+    private String description;
     @Column(name = "c_author")
-    public String author;
+    private String author;
 
     @OneToMany(mappedBy = "course", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Lesson> lessons = new ArrayList<>();
