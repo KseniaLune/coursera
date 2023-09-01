@@ -1,7 +1,6 @@
 plugins {
     id("java")
     id("org.springframework.boot") version "3.1.2"
-    id("org.springframework.boot") version "3.1.2"
     id("io.spring.dependency-management") version "1.1.2"
 }
 
@@ -30,6 +29,7 @@ dependencies {
     implementation(libs.spring.starter.data.jpa)
     implementation(libs.slf4j)
     implementation(libs.spring.starter.data.redis)
+    implementation(libs.spring.starter.data.elasticsearch)
 
     implementation(libs.spring.starter.validation)
     implementation(libs.spring.starter.security)

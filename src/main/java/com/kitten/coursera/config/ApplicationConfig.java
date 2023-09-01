@@ -73,9 +73,10 @@ public class ApplicationConfig {
             .authorizeHttpRequests((ahr) ->
                 ahr
                     .requestMatchers(
-                        "/course",
-                        "/course/filter",
-                        "/auth/**"
+//                        "/course/**",
+//                        "/course/filter",
+                        "/auth/**",
+                        "/elastic/**"
                     ).permitAll()
                     .anyRequest().authenticated()
             )

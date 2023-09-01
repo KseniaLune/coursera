@@ -3,6 +3,8 @@ package com.kitten.coursera.controller;
 import com.kitten.coursera.dto.CourseDto;
 import com.kitten.coursera.dto.mapper.CourseMapper;
 import com.kitten.coursera.domain.entity.Course;
+import com.kitten.coursera.dto.mapper.CourseElasticMapper;
+import com.kitten.coursera.elastic.CourseElasticService;
 import com.kitten.coursera.service.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +27,14 @@ public class CourseController {
 
     private final CourseService courseService;
     private final CourseMapper courseMapper;
+    private final CourseElasticService courseElasticService;
+    private final CourseElasticMapper courseElasticMapper;
 
-    @Secured({"ROLE_ADMIN","ROLE_OWNER"})
+//    @Secured({"ROLE_ADMIN","ROLE_OWNER"})
     @PostMapping("/create")
     public ResponseEntity<CourseDto> createCourse(@Valid @RequestBody CourseDto dto) {
         var course = courseService.create(dto);
+        courseElasticService.createCourse(courseElasticMapper.mapToCourseElastic(course));
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(courseMapper.toDto(course));
@@ -66,6 +71,7 @@ public class CourseController {
     public ResponseEntity<CourseDto> updateCourse(@PathVariable("id") UUID id,
                                           @Valid @RequestBody CourseDto dto) {
         Course course = courseService.updateCourse(id, dto);
+        courseElasticService.updateCourse(course, course.getId());
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(courseMapper.toDto(course));
@@ -75,6 +81,7 @@ public class CourseController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCourse(@PathVariable("id") UUID id) {
         courseService.deleteBy(id);
+        courseElasticService.deleteCourse(id);
         return ResponseEntity.ok("Курс успешно удален");
     }
 
